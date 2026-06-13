@@ -4,16 +4,27 @@ import com.AcademicScope.enums.RolUsuario;
 import com.AcademicScope.enums.TipoCurso;
 import com.AcademicScope.model.Curso;
 import com.AcademicScope.model.Grado;
+import com.AcademicScope.model.Institucion;
 import com.AcademicScope.model.Usuario;
-import com.AcademicScope.repository.CursoRepository;
-import com.AcademicScope.repository.GradoRepository;
-import com.AcademicScope.repository.UsuarioRepository;
+import com.AcademicScope.enums.EstadoMatricula;
+import com.AcademicScope.enums.TipoAsistencia;
+import com.AcademicScope.model.*;
+import com.AcademicScope.repository.academico.CursoRepository;
+import com.AcademicScope.repository.academico.GradoRepository;
+import com.AcademicScope.repository.institucion.InstitucionRepository;
+import com.AcademicScope.repository.usuario.UsuarioRepository;
+import com.AcademicScope.repository.matricula.MatriculaRepository;
+import com.AcademicScope.repository.asistencia.AsistenciaRepository;
+import com.AcademicScope.repository.horario.HorarioRepository;
+import com.AcademicScope.repository.evaluacion.EvaluacionRepository;
+import com.AcademicScope.repository.evaluacion.CalificacionRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 
@@ -24,62 +35,61 @@ public class DataInitializer implements CommandLineRunner {
     private final UsuarioRepository usuarioRepository;
     private final GradoRepository gradoRepository;
     private final CursoRepository cursoRepository;
+    private final InstitucionRepository institucionRepository;
+    private final MatriculaRepository matriculaRepository;
+    private final HorarioRepository horarioRepository;
+    private final AsistenciaRepository asistenciaRepository;
+    private final EvaluacionRepository evaluacionRepository;
+    private final CalificacionRepository calificacionRepository;
     private final PasswordEncoder passwordEncoder;
-
-    @Value("${ADMIN_EMAIL:admin@academicscope.com}") private String adminEmail;
-    @Value("${ADMIN_DNI:00000001}") private String adminDni;
-    @Value("${ADMIN_NOMBRE:Admin}") private String adminNombre;
-    @Value("${ADMIN_APELLIDO:Sistema}") private String adminApellido;
-
-    @Value("${DOCENTE1_EMAIL:profesor.mario@academicscope.com}") private String d1Email;
-    @Value("${DOCENTE1_DNI:12345678}") private String d1Dni;
-    @Value("${DOCENTE1_NOMBRE:Mario}") private String d1Nombre;
-    @Value("${DOCENTE1_APELLIDO:Gutierrez}") private String d1Apellido;
-
-    @Value("${DOCENTE2_EMAIL:profesora.laura@academicscope.com}") private String d2Email;
-    @Value("${DOCENTE2_DNI:87654321}") private String d2Dni;
-    @Value("${DOCENTE2_NOMBRE:Laura}") private String d2Nombre;
-    @Value("${DOCENTE2_APELLIDO:Condori}") private String d2Apellido;
-
-    @Value("${ESTUDIANTE1_EMAIL:juan.quispe@academicscope.com}") private String e1Email;
-    @Value("${ESTUDIANTE1_DNI:11111111}") private String e1Dni;
-    @Value("${ESTUDIANTE1_NOMBRE:Juan}") private String e1Nombre;
-    @Value("${ESTUDIANTE1_APELLIDO:Quispe}") private String e1Apellido;
-
-    @Value("${ESTUDIANTE2_EMAIL:maria.huaman@academicscope.com}") private String e2Email;
-    @Value("${ESTUDIANTE2_DNI:22222222}") private String e2Dni;
-    @Value("${ESTUDIANTE2_NOMBRE:Maria}") private String e2Nombre;
-    @Value("${ESTUDIANTE2_APELLIDO:Huaman}") private String e2Apellido;
-
-    @Value("${TUTOR1_EMAIL:carlos.quispe@academicscope.com}") private String t1Email;
-    @Value("${TUTOR1_DNI:33333333}") private String t1Dni;
-    @Value("${TUTOR1_NOMBRE:Carlos}") private String t1Nombre;
-    @Value("${TUTOR1_APELLIDO:Quispe}") private String t1Apellido;
-
-    @Value("${TUTOR2_EMAIL:juana.condori@academicscope.com}") private String t2Email;
-    @Value("${TUTOR2_DNI:44444444}") private String t2Dni;
-    @Value("${TUTOR2_NOMBRE:Juana}") private String t2Nombre;
-    @Value("${TUTOR2_APELLIDO:Condori}") private String t2Apellido;
+    private final Environment env;
 
     @Override
     public void run(String... args) {
+        crearInstitucionBase();
         crearUsuarios();
-        // crearGradosYCursos(); // Comentado para evitar que el sistema invente cursos automáticamente
-        System.out.println(" Inicialización de usuarios base completada");
+        crearGradosYCursos();
+        crearDatosMockParaSofia();
+        System.out.println(" Inicialización completada");
+    }
+
+    private void crearInstitucionBase() {
+        if (institucionRepository.findByRuc("10000000001").isEmpty()) {
+            institucionRepository.save(Institucion.builder()
+                    .nombreColegio("Colegio AcademicScope Por Defecto")
+                    .ruc("10000000001")
+                    .planSuscripcion("PREMIUM")
+                    .build());
+        }
     }
 
     private void crearUsuarios() {
-        crearUsuarioSiNoExiste(adminEmail, adminDni, adminNombre, adminApellido, RolUsuario.ADMIN, null);
-        crearUsuarioSiNoExiste(d1Email, d1Dni, d1Nombre, d1Apellido, RolUsuario.DOCENTE, null);
-        crearUsuarioSiNoExiste(d2Email, d2Dni, d2Nombre, d2Apellido, RolUsuario.DOCENTE, null);
-        crearUsuarioSiNoExiste(t1Email, t1Dni, t1Nombre, t1Apellido, RolUsuario.TUTOR, null);
-        crearUsuarioSiNoExiste(t2Email, t2Dni, t2Nombre, t2Apellido, RolUsuario.TUTOR, null);
+        // Administradores del Equipo leídos desde el .env
+        crearUsuarioSiNoExiste(env.getProperty("ADMIN1_EMAIL", "dennis@academicscope.com"), env.getProperty("ADMIN1_DNI", "70000001"), env.getProperty("ADMIN1_NOMBRE", "Dennis"), env.getProperty("ADMIN1_APELLIDO", "Admin"), env.getProperty("ADMIN1_PASSWORD", "Dennis$2026"), RolUsuario.ADMIN, null);
+        crearUsuarioSiNoExiste(env.getProperty("ADMIN2_EMAIL", "massiel@academicscope.com"), env.getProperty("ADMIN2_DNI", "70000002"), env.getProperty("ADMIN2_NOMBRE", "Massiel"), env.getProperty("ADMIN2_APELLIDO", "Admin"), env.getProperty("ADMIN2_PASSWORD", "Massiel$2026"), RolUsuario.ADMIN, null);
+        crearUsuarioSiNoExiste(env.getProperty("ADMIN3_EMAIL", "yadira@academicscope.com"), env.getProperty("ADMIN3_DNI", "70000003"), env.getProperty("ADMIN3_NOMBRE", "Yadira"), env.getProperty("ADMIN3_APELLIDO", "Admin"), env.getProperty("ADMIN3_PASSWORD", "Yadira$2026"), RolUsuario.ADMIN, null);
+        crearUsuarioSiNoExiste(env.getProperty("ADMIN4_EMAIL", "edmar@academicscope.com"), env.getProperty("ADMIN4_DNI", "70000004"), env.getProperty("ADMIN4_NOMBRE", "Edmar"), env.getProperty("ADMIN4_APELLIDO", "Admin"), env.getProperty("ADMIN4_PASSWORD", "Edmar$2026"), RolUsuario.ADMIN, null);
 
-        Usuario tutor1 = usuarioRepository.findByDni(t1Dni).orElse(null);
-        Usuario tutor2 = usuarioRepository.findByDni(t2Dni).orElse(null);
+        // Docentes Generados (Mock) leídos desde el .env
+        crearUsuarioSiNoExiste(env.getProperty("DOCENTE1_EMAIL", "profesor.mario@academicscope.com"), env.getProperty("DOCENTE1_DNI", "12345678"), env.getProperty("DOCENTE1_NOMBRE", "Mario"), env.getProperty("DOCENTE1_APELLIDO", "Gutierrez"), env.getProperty("DOCENTE1_PASSWORD", "Docente$2026"), RolUsuario.DOCENTE, null);
+        crearUsuarioSiNoExiste(env.getProperty("DOCENTE2_EMAIL", "profesora.laura@academicscope.com"), env.getProperty("DOCENTE2_DNI", "87654321"), env.getProperty("DOCENTE2_NOMBRE", "Laura"), env.getProperty("DOCENTE2_APELLIDO", "Condori"), env.getProperty("DOCENTE2_PASSWORD", "Docente$2026"), RolUsuario.DOCENTE, null);
+        crearUsuarioSiNoExiste(env.getProperty("DOCENTE3_EMAIL", "profesor.carlos@academicscope.com"), env.getProperty("DOCENTE3_DNI", "11223344"), env.getProperty("DOCENTE3_NOMBRE", "Carlos"), env.getProperty("DOCENTE3_APELLIDO", "Perez"), env.getProperty("DOCENTE3_PASSWORD", "Docente$2026"), RolUsuario.DOCENTE, null);
 
-        crearUsuarioSiNoExiste(e1Email, e1Dni, e1Nombre, e1Apellido, RolUsuario.ESTUDIANTE, tutor1);
-        crearUsuarioSiNoExiste(e2Email, e2Dni, e2Nombre, e2Apellido, RolUsuario.ESTUDIANTE, tutor2);
+        // Tutores Generados (Mock)
+        crearUsuarioSiNoExiste(env.getProperty("TUTOR1_EMAIL", "tutor.juan@academicscope.com"), env.getProperty("TUTOR1_DNI", "33333333"), env.getProperty("TUTOR1_NOMBRE", "Juan"), env.getProperty("TUTOR1_APELLIDO", "Quispe"), env.getProperty("TUTOR1_PASSWORD", "Tutor$2026"), RolUsuario.TUTOR, null);
+        crearUsuarioSiNoExiste(env.getProperty("TUTOR2_EMAIL", "tutora.ana@academicscope.com"), env.getProperty("TUTOR2_DNI", "44444444"), env.getProperty("TUTOR2_NOMBRE", "Ana"), env.getProperty("TUTOR2_APELLIDO", "Mamani"), env.getProperty("TUTOR2_PASSWORD", "Tutor$2026"), RolUsuario.TUTOR, null);
+        crearUsuarioSiNoExiste(env.getProperty("TUTOR3_EMAIL", "tutor.luis@academicscope.com"), env.getProperty("TUTOR3_DNI", "55555555"), env.getProperty("TUTOR3_NOMBRE", "Luis"), env.getProperty("TUTOR3_APELLIDO", "Sanchez"), env.getProperty("TUTOR3_PASSWORD", "Tutor$2026"), RolUsuario.TUTOR, null);
+
+        // Obtener a los tutores recién creados para asignarlos a los estudiantes
+        Usuario tutor1 = usuarioRepository.findByDni(env.getProperty("TUTOR1_DNI", "33333333")).orElse(null);
+        Usuario tutor2 = usuarioRepository.findByDni(env.getProperty("TUTOR2_DNI", "44444444")).orElse(null);
+        Usuario tutor3 = usuarioRepository.findByDni(env.getProperty("TUTOR3_DNI", "55555555")).orElse(null);
+
+        // Estudiantes Generados (Mock) asignados a sus respectivos tutores
+        crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE1_EMAIL", "estudiante.pedro@academicscope.com"), env.getProperty("ESTUDIANTE1_DNI", "11111111"), env.getProperty("ESTUDIANTE1_NOMBRE", "Pedro"), env.getProperty("ESTUDIANTE1_APELLIDO", "Quispe"), env.getProperty("ESTUDIANTE1_PASSWORD", "Estudiante$2026"), RolUsuario.ESTUDIANTE, tutor1);
+        crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE2_EMAIL", "estudiante.lucia@academicscope.com"), env.getProperty("ESTUDIANTE2_DNI", "22222222"), env.getProperty("ESTUDIANTE2_NOMBRE", "Lucia"), env.getProperty("ESTUDIANTE2_APELLIDO", "Quispe"), env.getProperty("ESTUDIANTE2_PASSWORD", "Estudiante$2026"), RolUsuario.ESTUDIANTE, tutor1);
+        crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE3_EMAIL", "estudiante.marcos@academicscope.com"), env.getProperty("ESTUDIANTE3_DNI", "66666666"), env.getProperty("ESTUDIANTE3_NOMBRE", "Marcos"), env.getProperty("ESTUDIANTE3_APELLIDO", "Mamani"), env.getProperty("ESTUDIANTE3_PASSWORD", "Estudiante$2026"), RolUsuario.ESTUDIANTE, tutor2);
+        crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE4_EMAIL", "estudiante.sofia@academicscope.com"), env.getProperty("ESTUDIANTE4_DNI", "77777777"), env.getProperty("ESTUDIANTE4_NOMBRE", "Sofia"), env.getProperty("ESTUDIANTE4_APELLIDO", "Sanchez"), env.getProperty("ESTUDIANTE4_PASSWORD", "Estudiante$2026"), RolUsuario.ESTUDIANTE, tutor3);
     }
 
     private void crearGradosYCursos() {
@@ -125,19 +135,87 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void crearUsuarioSiNoExiste(String email, String dni, String nombre,
-                                         String apellido, RolUsuario rol, Usuario tutor) {
-        if (usuarioRepository.findByEmail(email).isEmpty()) {
+                                         String apellido, String rawPassword, RolUsuario rol, Usuario tutor) {
+        if (usuarioRepository.findByEmail(email).isEmpty() && usuarioRepository.findByDni(dni).isEmpty()) {
             usuarioRepository.save(Usuario.builder()
                     .nombre(nombre)
                     .apellido(apellido)
                     .email(email)
                     .dni(dni)
-                    .password(passwordEncoder.encode(dni))
+                    .password(passwordEncoder.encode(rawPassword))
                     .rol(rol)
                     .tutor(tutor)
                     .activo(true)
                     .primerIngreso(true)
                     .build());
+            System.out.println("=========================================");
+            System.out.println(" NUEVO USUARIO CREADO: " + nombre + " " + apellido);
+            System.out.println(" Rol: " + rol);
+            System.out.println(" Email: " + email);
+            System.out.println(" Password (desde .env o default): " + rawPassword);
+            System.out.println("=========================================");
+        }
+    }
+
+    private void crearDatosMockParaSofia() {
+        Usuario sofia = usuarioRepository.findByDni(env.getProperty("ESTUDIANTE4_DNI", "77777777")).orElse(null);
+        if (sofia == null) return;
+
+        // Solo inyectamos datos si no tiene matrículas
+        if (matriculaRepository.findByEstudianteId(sofia.getId()).isEmpty()) {
+            
+            // 1. Obtener cursos
+            Curso cursoMatematicas = cursoRepository.findByTipo(TipoCurso.REGULAR).stream()
+                .filter(c -> c.getNombre().equals("Matemáticas"))
+                .findFirst().orElse(null);
+            
+            Curso cursoMusica = cursoRepository.findByTipo(TipoCurso.TALLER).stream()
+                .filter(c -> c.getNombre().equals("Música"))
+                .findFirst().orElse(null);
+
+            if (cursoMatematicas != null && cursoMusica != null) {
+                // 2. Crear Matrículas
+                matriculaRepository.save(Matricula.builder()
+                        .estudiante(sofia).curso(cursoMatematicas).estado(EstadoMatricula.ACTIVA)
+                        .fechaMatricula(LocalDate.now().minusMonths(2)).build());
+                matriculaRepository.save(Matricula.builder()
+                        .estudiante(sofia).curso(cursoMusica).estado(EstadoMatricula.ACTIVA)
+                        .fechaMatricula(LocalDate.now().minusMonths(2)).build());
+
+                // 3. Crear Horarios (Hoy es Sábado, simularemos clases en Sábado y Lunes)
+                horarioRepository.save(Horario.builder()
+                        .curso(cursoMatematicas).diaSemana("SABADO")
+                        .horaInicio("08:00").horaFin("10:00").aula("Pabellón A - 101").build());
+                horarioRepository.save(Horario.builder()
+                        .curso(cursoMusica).diaSemana("SABADO")
+                        .horaInicio("10:30").horaFin("12:00").aula("Sala de Música").build());
+                horarioRepository.save(Horario.builder()
+                        .curso(cursoMatematicas).diaSemana("LUNES")
+                        .horaInicio("08:00").horaFin("10:00").aula("Pabellón A - 101").build());
+
+                // 4. Crear Evaluaciones y Calificaciones (Semáforo VERDE -> Notas Altas)
+                Evaluacion evalParcial = evaluacionRepository.save(Evaluacion.builder()
+                        .curso(cursoMatematicas).nombre("Examen Parcial").ponderacion(50.0).orden(1).build());
+                Evaluacion evalPractica = evaluacionRepository.save(Evaluacion.builder()
+                        .curso(cursoMatematicas).nombre("Práctica Calificada").ponderacion(50.0).orden(2).build());
+
+                calificacionRepository.save(Calificacion.builder()
+                        .evaluacion(evalParcial).estudiante(sofia).nota(18.0)
+                        .comentarioDocente("Excelente progreso").fechaRegistro(LocalDate.now().minusDays(15)).build());
+                calificacionRepository.save(Calificacion.builder()
+                        .evaluacion(evalPractica).estudiante(sofia).nota(15.0)
+                        .fechaRegistro(LocalDate.now().minusDays(5)).build());
+
+                // 5. Crear Asistencias (Simular 10 clases anteriores)
+                for (int i = 1; i <= 10; i++) {
+                    TipoAsistencia tipo = (i == 3) ? TipoAsistencia.TARDANZA : (i == 7 ? TipoAsistencia.FALTA : TipoAsistencia.PRESENTE);
+                    asistenciaRepository.save(Asistencia.builder()
+                            .estudiante(sofia).curso(cursoMatematicas)
+                            .fecha(LocalDate.now().minusDays(i)).tipo(tipo).build());
+                }
+                
+                System.out.println(" Datos Mock inyectados exitosamente para Sofia (ESTUDIANTE4)");
+            }
         }
     }
 }

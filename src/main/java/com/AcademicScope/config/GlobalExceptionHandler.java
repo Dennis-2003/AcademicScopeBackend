@@ -13,6 +13,16 @@ import java.time.LocalDateTime;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    @ExceptionHandler(org.springframework.security.authentication.BadCredentialsException.class)
+    public ResponseEntity<ErrorViewModel> handleBadCredentials(org.springframework.security.authentication.BadCredentialsException ex) {
+        ErrorViewModel error = ErrorViewModel.builder()
+                .codigo(HttpStatus.UNAUTHORIZED.value())
+                .mensaje("Credenciales incorrectas")
+                .timestamp(LocalDateTime.now())
+                .build();
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error);
+    }
+
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorViewModel> handleRuntime(RuntimeException ex) {
         ErrorViewModel error = ErrorViewModel.builder()
