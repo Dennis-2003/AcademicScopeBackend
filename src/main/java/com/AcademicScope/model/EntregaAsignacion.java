@@ -25,4 +25,12 @@ public class EntregaAsignacion {
 
     @Column(nullable = false)
     private String estado; // ENTREGADO, ATRASADO
+
+    @Column(columnDefinition = "TEXT")
+    private String archivoUrl;
+
+    private Boolean cumplio;
+
+    @Column(columnDefinition = "TEXT")
+    private String retroalimentacion;
 }

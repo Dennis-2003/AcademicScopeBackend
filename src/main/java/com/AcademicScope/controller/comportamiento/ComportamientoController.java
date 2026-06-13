@@ -16,6 +16,11 @@ public class ComportamientoController {
 
     private final ComportamientoService comportamientoService;
 
+    @GetMapping
+    public ResponseEntity<List<Comportamiento>> listarTodos() {
+        return ResponseEntity.ok(comportamientoService.listarTodos());
+    }
+
     @PostMapping
     public ResponseEntity<Comportamiento> registrar(@RequestBody Comportamiento comportamiento) {
         return new ResponseEntity<>(comportamientoService.registrar(comportamiento), HttpStatus.CREATED);

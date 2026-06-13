@@ -20,8 +20,11 @@ public class Matricula {
     private Usuario estudiante;
 
     @ManyToOne
-    @JoinColumn(name = "curso_id", nullable = false)
-    private Curso curso;
+    @JoinColumn(name = "grado_id", nullable = false)
+    private Grado grado;
+
+    @Column(nullable = false, length = 10)
+    private String seccion;
 
     @ManyToOne
     @JoinColumn(name = "periodo_id")

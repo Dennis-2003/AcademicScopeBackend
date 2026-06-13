@@ -14,6 +14,7 @@ import java.util.List;
 public class MatriculaService {
 
     private final MatriculaRepository matriculaRepository;
+    private final com.AcademicScope.repository.academico.CursoRepository cursoRepository;
 
     public Matricula matricular(Matricula matricula) {
         matricula.setEstado(EstadoMatricula.ACTIVA);
@@ -37,8 +38,20 @@ public class MatriculaService {
         return matriculaRepository.findByEstudianteId(estudianteId);
     }
 
+    public List<Matricula> listarTodas() {
+        return matriculaRepository.findAll();
+    }
+
     public List<Matricula> listarPorGrado(Long gradoId) {
-        return matriculaRepository.findByCursoGradoId(gradoId);
+        return matriculaRepository.findByGradoId(gradoId);
+    }
+
+    public List<Matricula> listarPorCurso(Long cursoId) {
+        com.AcademicScope.model.Curso curso = cursoRepository.findById(cursoId).orElse(null);
+        if (curso != null && curso.getGrado() != null) {
+            return matriculaRepository.findByGradoId(curso.getGrado().getId());
+        }
+        return List.of();
     }
 
     public List<Matricula> listarPorPeriodo(Long periodoId) {

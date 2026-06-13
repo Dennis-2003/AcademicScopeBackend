@@ -10,4 +10,5 @@ import java.util.List;
 public interface ComportamientoRepository extends JpaRepository<Comportamiento, Long> {
     List<Comportamiento> findByEstudianteIdAndPeriodoId(Long estudianteId, Long periodoId);
     List<Comportamiento> findByEstudianteId(Long estudianteId);
+    List<Comportamiento> findAllByOrderByFechaDescIdDesc();
 }

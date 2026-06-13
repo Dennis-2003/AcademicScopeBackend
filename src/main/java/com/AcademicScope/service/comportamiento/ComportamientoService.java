@@ -19,6 +19,10 @@ public class ComportamientoService {
         return comportamientoRepository.save(comportamiento);
     }
 
+    public List<Comportamiento> listarTodos() {
+        return comportamientoRepository.findAllByOrderByFechaDescIdDesc();
+    }
+
     public Comportamiento obtenerPorId(Long id) {
         return comportamientoRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Comportamiento no encontrado"));

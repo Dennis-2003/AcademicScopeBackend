@@ -1,5 +1,5 @@
 package com.AcademicScope.enums;
 
 public enum TipoConducta {
-    POSITIVA, NEGATIVA
+    VERDE, AMARILLO, ROJO
 }

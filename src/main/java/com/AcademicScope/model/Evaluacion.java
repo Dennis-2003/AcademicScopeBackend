@@ -2,6 +2,7 @@ package com.AcademicScope.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "evaluaciones")
@@ -24,6 +25,8 @@ public class Evaluacion {
     private String nombre;
 
     private String descripcion;
+
+    private LocalDate fecha;
 
     private Double ponderacion;
 

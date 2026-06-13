@@ -41,6 +41,10 @@ public class DataInitializer implements CommandLineRunner {
     private final AsistenciaRepository asistenciaRepository;
     private final EvaluacionRepository evaluacionRepository;
     private final CalificacionRepository calificacionRepository;
+    private final com.AcademicScope.repository.asignacion.AsignacionRepository asignacionRepository;
+    private final com.AcademicScope.repository.recurso.RecursoRepository recursoRepository;
+    private final com.AcademicScope.repository.comunicado.ComunicadoRepository comunicadoRepository;
+    private final com.AcademicScope.repository.notificacion.NotificacionRepository notificacionRepository;
     private final PasswordEncoder passwordEncoder;
     private final Environment env;
 
@@ -161,6 +165,33 @@ public class DataInitializer implements CommandLineRunner {
         Usuario sofia = usuarioRepository.findByDni(env.getProperty("ESTUDIANTE4_DNI", "77777777")).orElse(null);
         if (sofia == null) return;
 
+        // Obtener a Mario y a un Admin
+        Usuario mario = usuarioRepository.findByDni(env.getProperty("DOCENTE1_DNI", "12345678")).orElse(null);
+        Usuario admin = usuarioRepository.findByEmail(env.getProperty("ADMIN1_EMAIL", "dennis@academicscope.com")).orElse(null);
+
+        // Crear comunicado global si no existe
+        if (comunicadoRepository.count() == 0 && admin != null) {
+            comunicadoRepository.save(Comunicado.builder()
+                    .titulo("Reunión de Coordinación Docente")
+                    .contenido("Se convoca a todos los docentes a la reunión general de inicio de mes en el auditorio principal.")
+                    .audiencia("DOCENTES")
+                    .prioridad("ALTA")
+                    .fecha(LocalDate.now())
+                    .build());
+        }
+
+        // Crear una notificación directa a Mario
+        if (mario != null && notificacionRepository.findByUsuarioIdOrderByFechaEnvioDesc(mario.getId()).isEmpty() && admin != null) {
+            notificacionRepository.save(Notificacion.builder()
+                    .usuario(mario)
+                    .remitente(admin)
+                    .titulo("Actualización de Sílabo Requerida")
+                    .mensaje("Estimado Mario, por favor envíenos el sílabo actualizado de Matemáticas antes del viernes.")
+                    .fechaEnvio(java.time.LocalDateTime.now())
+                    .leido(false)
+                    .build());
+        }
+
         // Solo inyectamos datos si no tiene matrículas
         if (matriculaRepository.findByEstudianteId(sofia.getId()).isEmpty()) {
             
@@ -174,20 +205,45 @@ public class DataInitializer implements CommandLineRunner {
                 .findFirst().orElse(null);
 
             if (cursoMatematicas != null && cursoMusica != null) {
+                // Asignarle a Mario la clase de Matemáticas
+                if (mario != null) {
+                    cursoMatematicas.setDocente(mario);
+                    cursoRepository.save(cursoMatematicas);
+                }
+
+                // Crear Asignación y Recurso mock para Matemáticas
+                if (asignacionRepository.findByCursoId(cursoMatematicas.getId()).isEmpty()) {
+                    asignacionRepository.save(Asignacion.builder()
+                            .curso(cursoMatematicas)
+                            .titulo("Ejercicios de Álgebra Avanzada")
+                            .descripcion("Resolver la separata de ecuaciones de primer grado.")
+                            .fechaRegistro(java.time.LocalDateTime.now().minusDays(1))
+                            .fechaVencimiento(java.time.LocalDateTime.now().plusDays(3))
+                            .estado("ACTIVA")
+                            .build());
+                }
+
+                if (recursoRepository.findByCursoId(cursoMatematicas.getId()).isEmpty()) {
+                    recursoRepository.save(Recurso.builder()
+                            .curso(cursoMatematicas)
+                            .titulo("Guía de Matemáticas - Primer Bimestre")
+                            .tipo("PDF")
+                            .url("https://ejemplo.com/guia_mate.pdf")
+                            .fechaSubida(java.time.LocalDateTime.now())
+                            .build());
+                }
+
                 // 2. Crear Matrículas
                 matriculaRepository.save(Matricula.builder()
-                        .estudiante(sofia).curso(cursoMatematicas).estado(EstadoMatricula.ACTIVA)
-                        .fechaMatricula(LocalDate.now().minusMonths(2)).build());
-                matriculaRepository.save(Matricula.builder()
-                        .estudiante(sofia).curso(cursoMusica).estado(EstadoMatricula.ACTIVA)
+                        .estudiante(sofia).grado(cursoMatematicas.getGrado()).seccion("A").estado(EstadoMatricula.ACTIVA)
                         .fechaMatricula(LocalDate.now().minusMonths(2)).build());
 
                 // 3. Crear Horarios (Hoy es Sábado, simularemos clases en Sábado y Lunes)
                 horarioRepository.save(Horario.builder()
-                        .curso(cursoMatematicas).diaSemana("SABADO")
+                        .curso(cursoMatematicas).diaSemana("SÁBADO")
                         .horaInicio("08:00").horaFin("10:00").aula("Pabellón A - 101").build());
                 horarioRepository.save(Horario.builder()
-                        .curso(cursoMusica).diaSemana("SABADO")
+                        .curso(cursoMusica).diaSemana("SÁBADO")
                         .horaInicio("10:30").horaFin("12:00").aula("Sala de Música").build());
                 horarioRepository.save(Horario.builder()
                         .curso(cursoMatematicas).diaSemana("LUNES")
@@ -195,9 +251,14 @@ public class DataInitializer implements CommandLineRunner {
 
                 // 4. Crear Evaluaciones y Calificaciones (Semáforo VERDE -> Notas Altas)
                 Evaluacion evalParcial = evaluacionRepository.save(Evaluacion.builder()
-                        .curso(cursoMatematicas).nombre("Examen Parcial").ponderacion(50.0).orden(1).build());
+                        .curso(cursoMatematicas).nombre("Examen Parcial").ponderacion(50.0).orden(1)
+                        .fecha(LocalDate.now().minusDays(5)).build());
                 Evaluacion evalPractica = evaluacionRepository.save(Evaluacion.builder()
-                        .curso(cursoMatematicas).nombre("Práctica Calificada").ponderacion(50.0).orden(2).build());
+                        .curso(cursoMatematicas).nombre("Práctica Calificada").ponderacion(50.0).orden(2)
+                        .fecha(LocalDate.now().plusDays(3)).build()); // Evaluacion Futura para que salga en "Próximas"
+                Evaluacion evalFinal = evaluacionRepository.save(Evaluacion.builder()
+                        .curso(cursoMatematicas).nombre("Examen Final").ponderacion(50.0).orden(3)
+                        .fecha(LocalDate.now().plusDays(10)).build()); // Evaluacion Futura
 
                 calificacionRepository.save(Calificacion.builder()
                         .evaluacion(evalParcial).estudiante(sofia).nota(18.0)
@@ -214,7 +275,7 @@ public class DataInitializer implements CommandLineRunner {
                             .fecha(LocalDate.now().minusDays(i)).tipo(tipo).build());
                 }
                 
-                System.out.println(" Datos Mock inyectados exitosamente para Sofia (ESTUDIANTE4)");
+                System.out.println(" Datos Mock inyectados exitosamente para Sofia (ESTUDIANTE4) y Docente Mario");
             }
         }
     }

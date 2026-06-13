@@ -34,4 +34,10 @@ public class Comportamiento {
     private String descripcion;
 
     private LocalDate fecha;
+
+    @Column(name = "puntaje")
+    private Integer puntaje;
+
+    @Column(name = "calificacion_literal", length = 5)
+    private String calificacionLiteral;
 }

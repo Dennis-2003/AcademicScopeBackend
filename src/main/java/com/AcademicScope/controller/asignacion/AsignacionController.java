@@ -37,6 +37,11 @@ public class AsignacionController {
         return ResponseEntity.ok(asignacionService.obtenerEntregas(id));
     }
 
+    @GetMapping("/estudiante/{estudianteId}")
+    public ResponseEntity<List<Asignacion>> listarPorEstudiante(@PathVariable Long estudianteId) {
+        return ResponseEntity.ok(asignacionService.listarPorEstudiante(estudianteId));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         asignacionService.eliminar(id);

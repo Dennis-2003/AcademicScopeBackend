@@ -21,6 +21,11 @@ public class MatriculaController {
         return new ResponseEntity<>(matriculaService.matricular(matricula), HttpStatus.CREATED);
     }
 
+    @GetMapping
+    public ResponseEntity<List<Matricula>> listarTodas() {
+        return ResponseEntity.ok(matriculaService.listarTodas());
+    }
+
     @PutMapping("/{id}/retirar")
     public ResponseEntity<Matricula> retirar(@PathVariable Long id) {
         return ResponseEntity.ok(matriculaService.retirar(id));
@@ -39,6 +44,11 @@ public class MatriculaController {
     @GetMapping("/grado/{gradoId}")
     public ResponseEntity<List<Matricula>> listarPorGrado(@PathVariable Long gradoId) {
         return ResponseEntity.ok(matriculaService.listarPorGrado(gradoId));
+    }
+
+    @GetMapping("/curso/{cursoId}")
+    public ResponseEntity<List<Matricula>> listarPorCurso(@PathVariable Long cursoId) {
+        return ResponseEntity.ok(matriculaService.listarPorCurso(cursoId));
     }
 
     @GetMapping("/periodo/{periodoId}")

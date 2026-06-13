@@ -10,4 +10,5 @@ import java.util.List;
 public interface EvaluacionRepository extends JpaRepository<Evaluacion, Long> {
     List<Evaluacion> findByCursoIdAndPeriodoId(Long cursoId, Long periodoId);
     List<Evaluacion> findByCursoId(Long cursoId);
+    List<Evaluacion> findByCursoDocenteIdOrderByFechaAsc(Long docenteId);
 }

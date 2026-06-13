@@ -16,7 +16,11 @@ public class Notificacion {
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
-    private Usuario usuario;
+    private Usuario usuario; // Destinatario
+
+    @ManyToOne
+    @JoinColumn(name = "remitente_id", nullable = true)
+    private Usuario remitente; // Quien envía
 
     @Column(nullable = false)
     private String titulo;

@@ -6,8 +6,14 @@ import com.AcademicScope.enums.RolUsuario;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +51,31 @@ public class UsuarioService {
     public Usuario obtenerPorDni(String dni) {
         return usuarioRepository.findByDni(dni)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+    }
+
+    public Usuario subirAvatar(Long id, MultipartFile archivo) {
+        Usuario usuario = obtenerPorId(id);
+        if (archivo != null && !archivo.isEmpty()) {
+            try {
+                String UPLOAD_DIR = "uploads/avatars/";
+                File dir = new File(UPLOAD_DIR);
+                if (!dir.exists()) {
+                    dir.mkdirs();
+                }
+                String originalName = archivo.getOriginalFilename();
+                String extension = originalName != null && originalName.contains(".") ? originalName.substring(originalName.lastIndexOf(".")) : "";
+                String uniqueName = UUID.randomUUID().toString() + extension;
+                
+                Path filepath = Paths.get(UPLOAD_DIR, uniqueName);
+                archivo.transferTo(filepath);
+
+                usuario.setAvatarUrl(uniqueName);
+                return usuarioRepository.save(usuario);
+            } catch (IOException e) {
+                throw new RuntimeException("Error al guardar el avatar", e);
+            }
+        }
+        return usuario;
     }
 
     public List<Usuario> listarTodos() {

@@ -37,12 +37,8 @@ public class Curso {
     @JoinColumn(name = "docente_id")
     private Usuario docente;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "curso")
-    private List<Matricula> matriculas;
-
     public int getMatriculados() {
-        return matriculas != null ? matriculas.size() : 0;
+        return grado != null && grado.getMatriculas() != null ? grado.getMatriculas().size() : 0;
     }
 
     @JsonIgnore

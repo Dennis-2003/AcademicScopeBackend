@@ -23,4 +23,8 @@ public class Grado {
     @JsonIgnore
     @OneToMany(mappedBy = "grado")
     private List<Curso> cursos;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "grado")
+    private List<Matricula> matriculas;
 }

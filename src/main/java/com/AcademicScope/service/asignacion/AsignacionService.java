@@ -38,4 +38,8 @@ public class AsignacionService {
     public List<EntregaAsignacion> obtenerEntregas(Long asignacionId) {
         return entregaRepository.findByAsignacionId(asignacionId);
     }
+
+    public List<Asignacion> listarPorEstudiante(Long estudianteId) {
+        return asignacionRepository.findByEstudianteId(estudianteId);
+    }
 }

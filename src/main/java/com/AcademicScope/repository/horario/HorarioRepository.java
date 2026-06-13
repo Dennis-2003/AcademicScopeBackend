@@ -9,4 +9,5 @@ import java.util.List;
 @Repository
 public interface HorarioRepository extends JpaRepository<Horario, Long> {
     List<Horario> findByCursoId(Long cursoId);
+    List<Horario> findByCursoDocenteId(Long docenteId);
 }

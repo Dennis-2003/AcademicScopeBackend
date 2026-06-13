@@ -36,6 +36,11 @@ public class NotificacionController {
         return ResponseEntity.ok(notificacionService.listarNoLeidas(usuarioId));
     }
 
+    @GetMapping("/enviadas/remitente/{remitenteId}")
+    public ResponseEntity<List<Notificacion>> listarEnviadas(@PathVariable Long remitenteId) {
+        return ResponseEntity.ok(notificacionService.listarEnviadasPorUsuario(remitenteId));
+    }
+
     @PutMapping("/{id}/leer")
     public ResponseEntity<Void> marcarLeida(@PathVariable Long id) {
         notificacionService.marcarLeida(id);

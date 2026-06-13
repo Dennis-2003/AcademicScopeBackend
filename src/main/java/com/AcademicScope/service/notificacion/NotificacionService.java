@@ -33,6 +33,10 @@ public class NotificacionService {
         return notificacionRepository.findByUsuarioIdAndLeidoFalse(usuarioId);
     }
 
+    public List<Notificacion> listarEnviadasPorUsuario(Long remitenteId) {
+        return notificacionRepository.findByRemitenteIdOrderByFechaEnvioDesc(remitenteId);
+    }
+
     public void marcarLeida(Long id) {
         notificacionRepository.findById(id).ifPresent(n -> {
             n.setLeido(true);

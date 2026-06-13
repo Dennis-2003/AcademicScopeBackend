@@ -41,6 +41,11 @@ public class EvaluacionController {
         return ResponseEntity.ok(evaluacionService.listarPorCurso(cursoId));
     }
 
+    @GetMapping("/docente/{docenteId}/proximas")
+    public ResponseEntity<List<Evaluacion>> listarProximasPorDocente(@PathVariable Long docenteId) {
+        return ResponseEntity.ok(evaluacionService.listarProximasPorDocente(docenteId));
+    }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         evaluacionService.eliminar(id);

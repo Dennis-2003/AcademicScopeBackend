@@ -21,6 +21,10 @@ public class HorarioService {
         return horarioRepository.findByCursoId(cursoId);
     }
 
+    public List<Horario> listarPorDocente(Long docenteId) {
+        return horarioRepository.findByCursoDocenteId(docenteId);
+    }
+
     public List<Horario> listarTodos() {
         return horarioRepository.findAll();
     }

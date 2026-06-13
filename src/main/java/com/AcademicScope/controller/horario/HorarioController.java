@@ -31,6 +31,11 @@ public class HorarioController {
         return ResponseEntity.ok(horarioService.listarPorCurso(cursoId));
     }
 
+    @GetMapping("/docente/{docenteId}")
+    public ResponseEntity<List<Horario>> listarPorDocente(@PathVariable Long docenteId) {
+        return ResponseEntity.ok(horarioService.listarPorDocente(docenteId));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<Horario> obtener(@PathVariable Long id) {
         return ResponseEntity.ok(horarioService.obtenerPorId(id));

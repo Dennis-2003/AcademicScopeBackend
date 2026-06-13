@@ -40,6 +40,10 @@ public class EvaluacionService {
         return evaluacionRepository.findByCursoId(cursoId);
     }
 
+    public List<Evaluacion> listarProximasPorDocente(Long docenteId) {
+        return evaluacionRepository.findByCursoDocenteIdOrderByFechaAsc(docenteId);
+    }
+
     public void eliminar(Long id) {
         evaluacionRepository.deleteById(id);
     }
