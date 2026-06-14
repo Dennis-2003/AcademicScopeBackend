@@ -53,7 +53,7 @@ public class DataInitializer implements CommandLineRunner {
         crearInstitucionBase();
         crearUsuarios();
         crearGradosYCursos();
-        crearDatosMockParaSofia();
+        crearDatosMockEstudiantes();
         System.out.println(" Inicialización completada");
     }
 
@@ -161,9 +161,11 @@ public class DataInitializer implements CommandLineRunner {
         }
     }
 
-    private void crearDatosMockParaSofia() {
+    private void crearDatosMockEstudiantes() {
         Usuario sofia = usuarioRepository.findByDni(env.getProperty("ESTUDIANTE4_DNI", "77777777")).orElse(null);
-        if (sofia == null) return;
+        Usuario pedro = usuarioRepository.findByDni(env.getProperty("ESTUDIANTE1_DNI", "11111111")).orElse(null);
+        Usuario lucia = usuarioRepository.findByDni(env.getProperty("ESTUDIANTE2_DNI", "22222222")).orElse(null);
+        Usuario marcos = usuarioRepository.findByDni(env.getProperty("ESTUDIANTE3_DNI", "66666666")).orElse(null);
 
         // Obtener a Mario y a un Admin
         Usuario mario = usuarioRepository.findByDni(env.getProperty("DOCENTE1_DNI", "12345678")).orElse(null);
@@ -176,6 +178,15 @@ public class DataInitializer implements CommandLineRunner {
                     .contenido("Se convoca a todos los docentes a la reunión general de inicio de mes en el auditorio principal.")
                     .audiencia("DOCENTES")
                     .prioridad("ALTA")
+                    .fecha(LocalDate.now())
+                    .build());
+            
+            // Comunicado para estudiantes
+            comunicadoRepository.save(Comunicado.builder()
+                    .titulo("Inicio de Talleres Extracurriculares")
+                    .contenido("Les recordamos a todos los estudiantes que este fin de semana inician los talleres.")
+                    .audiencia("ESTUDIANTES")
+                    .prioridad("NORMAL")
                     .fecha(LocalDate.now())
                     .build());
         }
@@ -192,91 +203,165 @@ public class DataInitializer implements CommandLineRunner {
                     .build());
         }
 
-        // Solo inyectamos datos si no tiene matrículas
-        if (matriculaRepository.findByEstudianteId(sofia.getId()).isEmpty()) {
+        // 1. Configurar cursos
+        Curso cursoMatematicas = cursoRepository.findByTipo(TipoCurso.REGULAR).stream()
+            .filter(c -> c.getNombre().equals("Matemáticas"))
+            .findFirst().orElse(null);
+        
+        Curso cursoMusica = cursoRepository.findByTipo(TipoCurso.TALLER).stream()
+            .filter(c -> c.getNombre().equals("Música"))
+            .findFirst().orElse(null);
+
+        if (cursoMatematicas != null && cursoMusica != null) {
+            // Asignarle a Mario la clase de Matemáticas
+            if (mario != null) {
+                cursoMatematicas.setDocente(mario);
+                cursoRepository.save(cursoMatematicas);
+            }
+
+            // Crear Asignación y Recurso mock para Matemáticas
+            if (asignacionRepository.findByCursoId(cursoMatematicas.getId()).isEmpty()) {
+                asignacionRepository.save(Asignacion.builder()
+                        .curso(cursoMatematicas)
+                        .titulo("Ejercicios de Álgebra Avanzada")
+                        .descripcion("Resolver la separata de ecuaciones de primer grado.")
+                        .fechaRegistro(java.time.LocalDateTime.now().minusDays(1))
+                        .fechaVencimiento(java.time.LocalDateTime.now().plusDays(3))
+                        .estado("ACTIVA")
+                        .build());
+            }
+
+            if (recursoRepository.findByCursoId(cursoMatematicas.getId()).isEmpty()) {
+                recursoRepository.save(Recurso.builder()
+                        .curso(cursoMatematicas)
+                        .titulo("Guía de Matemáticas - Primer Bimestre")
+                        .tipo("PDF")
+                        .url("https://ejemplo.com/guia_mate.pdf")
+                        .fechaSubida(java.time.LocalDateTime.now())
+                        .build());
+            }
             
-            // 1. Obtener cursos
-            Curso cursoMatematicas = cursoRepository.findByTipo(TipoCurso.REGULAR).stream()
-                .filter(c -> c.getNombre().equals("Matemáticas"))
-                .findFirst().orElse(null);
+            // Horarios (Si no existen)
+            if (horarioRepository.findByCursoId(cursoMatematicas.getId()).isEmpty()) {
+                horarioRepository.save(Horario.builder()
+                        .curso(cursoMatematicas).diaSemana("LUNES")
+                        .horaInicio("08:00").horaFin("10:00").aula("Pabellón A - 101").build());
+                horarioRepository.save(Horario.builder()
+                        .curso(cursoMatematicas).diaSemana("MIÉRCOLES")
+                        .horaInicio("08:00").horaFin("10:00").aula("Pabellón A - 101").build());
+                horarioRepository.save(Horario.builder()
+                        .curso(cursoMatematicas).diaSemana("VIERNES")
+                        .horaInicio("10:30").horaFin("12:00").aula("Pabellón A - 101").build());
+            }
+            if (horarioRepository.findByCursoId(cursoMusica.getId()).isEmpty()) {
+                horarioRepository.save(Horario.builder()
+                        .curso(cursoMusica).diaSemana("VIERNES")
+                        .horaInicio("15:00").horaFin("17:00").aula("Sala de Música").build());
+            }
             
-            Curso cursoMusica = cursoRepository.findByTipo(TipoCurso.TALLER).stream()
-                .filter(c -> c.getNombre().equals("Música"))
-                .findFirst().orElse(null);
+            // Crear Evaluaciones (Si no existen)
+            List<Evaluacion> evaluaciones = evaluacionRepository.findByCursoId(cursoMatematicas.getId());
+            if (evaluaciones.isEmpty()) {
+                evaluacionRepository.save(Evaluacion.builder()
+                        .curso(cursoMatematicas).nombre("Examen Parcial").ponderacion(50.0).orden(1)
+                        .fecha(LocalDate.now().minusDays(5)).build());
+                evaluacionRepository.save(Evaluacion.builder()
+                        .curso(cursoMatematicas).nombre("Práctica Calificada").ponderacion(50.0).orden(2)
+                        .fecha(LocalDate.now().plusDays(3)).build()); 
+                evaluacionRepository.save(Evaluacion.builder()
+                        .curso(cursoMatematicas).nombre("Examen Final").ponderacion(50.0).orden(3)
+                        .fecha(LocalDate.now().plusDays(10)).build()); 
+                evaluaciones = evaluacionRepository.findByCursoId(cursoMatematicas.getId());
+            }
 
-            if (cursoMatematicas != null && cursoMusica != null) {
-                // Asignarle a Mario la clase de Matemáticas
-                if (mario != null) {
-                    cursoMatematicas.setDocente(mario);
-                    cursoRepository.save(cursoMatematicas);
-                }
-
-                // Crear Asignación y Recurso mock para Matemáticas
-                if (asignacionRepository.findByCursoId(cursoMatematicas.getId()).isEmpty()) {
-                    asignacionRepository.save(Asignacion.builder()
-                            .curso(cursoMatematicas)
-                            .titulo("Ejercicios de Álgebra Avanzada")
-                            .descripcion("Resolver la separata de ecuaciones de primer grado.")
-                            .fechaRegistro(java.time.LocalDateTime.now().minusDays(1))
-                            .fechaVencimiento(java.time.LocalDateTime.now().plusDays(3))
-                            .estado("ACTIVA")
-                            .build());
-                }
-
-                if (recursoRepository.findByCursoId(cursoMatematicas.getId()).isEmpty()) {
-                    recursoRepository.save(Recurso.builder()
-                            .curso(cursoMatematicas)
-                            .titulo("Guía de Matemáticas - Primer Bimestre")
-                            .tipo("PDF")
-                            .url("https://ejemplo.com/guia_mate.pdf")
-                            .fechaSubida(java.time.LocalDateTime.now())
-                            .build());
-                }
-
-                // 2. Crear Matrículas
+            // INYECTAR DATOS PARA SOFIA
+            if (sofia != null && matriculaRepository.findByEstudianteId(sofia.getId()).isEmpty()) {
                 matriculaRepository.save(Matricula.builder()
                         .estudiante(sofia).grado(cursoMatematicas.getGrado()).seccion("A").estado(EstadoMatricula.ACTIVA)
                         .fechaMatricula(LocalDate.now().minusMonths(2)).build());
 
-                // 3. Crear Horarios (Hoy es Sábado, simularemos clases en Sábado y Lunes)
-                horarioRepository.save(Horario.builder()
-                        .curso(cursoMatematicas).diaSemana("SÁBADO")
-                        .horaInicio("08:00").horaFin("10:00").aula("Pabellón A - 101").build());
-                horarioRepository.save(Horario.builder()
-                        .curso(cursoMusica).diaSemana("SÁBADO")
-                        .horaInicio("10:30").horaFin("12:00").aula("Sala de Música").build());
-                horarioRepository.save(Horario.builder()
-                        .curso(cursoMatematicas).diaSemana("LUNES")
-                        .horaInicio("08:00").horaFin("10:00").aula("Pabellón A - 101").build());
+                // Calificaciones Sofia
+                if (!evaluaciones.isEmpty()) {
+                    calificacionRepository.save(Calificacion.builder()
+                            .evaluacion(evaluaciones.get(0)).estudiante(sofia).nota(18.0)
+                            .comentarioDocente("Excelente progreso").fechaRegistro(LocalDate.now().minusDays(15)).build());
+                }
 
-                // 4. Crear Evaluaciones y Calificaciones (Semáforo VERDE -> Notas Altas)
-                Evaluacion evalParcial = evaluacionRepository.save(Evaluacion.builder()
-                        .curso(cursoMatematicas).nombre("Examen Parcial").ponderacion(50.0).orden(1)
-                        .fecha(LocalDate.now().minusDays(5)).build());
-                Evaluacion evalPractica = evaluacionRepository.save(Evaluacion.builder()
-                        .curso(cursoMatematicas).nombre("Práctica Calificada").ponderacion(50.0).orden(2)
-                        .fecha(LocalDate.now().plusDays(3)).build()); // Evaluacion Futura para que salga en "Próximas"
-                Evaluacion evalFinal = evaluacionRepository.save(Evaluacion.builder()
-                        .curso(cursoMatematicas).nombre("Examen Final").ponderacion(50.0).orden(3)
-                        .fecha(LocalDate.now().plusDays(10)).build()); // Evaluacion Futura
-
-                calificacionRepository.save(Calificacion.builder()
-                        .evaluacion(evalParcial).estudiante(sofia).nota(18.0)
-                        .comentarioDocente("Excelente progreso").fechaRegistro(LocalDate.now().minusDays(15)).build());
-                calificacionRepository.save(Calificacion.builder()
-                        .evaluacion(evalPractica).estudiante(sofia).nota(15.0)
-                        .fechaRegistro(LocalDate.now().minusDays(5)).build());
-
-                // 5. Crear Asistencias (Simular 10 clases anteriores)
+                // Asistencias Sofia
                 for (int i = 1; i <= 10; i++) {
                     TipoAsistencia tipo = (i == 3) ? TipoAsistencia.TARDANZA : (i == 7 ? TipoAsistencia.FALTA : TipoAsistencia.PRESENTE);
                     asistenciaRepository.save(Asistencia.builder()
                             .estudiante(sofia).curso(cursoMatematicas)
                             .fecha(LocalDate.now().minusDays(i)).tipo(tipo).build());
                 }
-                
-                System.out.println(" Datos Mock inyectados exitosamente para Sofia (ESTUDIANTE4) y Docente Mario");
             }
+
+            // INYECTAR DATOS PARA PEDRO (ESTUDIANTE 1)
+            if (pedro != null && matriculaRepository.findByEstudianteId(pedro.getId()).isEmpty()) {
+                // Matricular a Pedro
+                matriculaRepository.save(Matricula.builder()
+                        .estudiante(pedro).grado(cursoMatematicas.getGrado()).seccion("A").estado(EstadoMatricula.ACTIVA)
+                        .fechaMatricula(LocalDate.now().minusMonths(2)).build());
+
+                // Calificaciones Pedro (Para que el semáforo muestre datos, ej. notas mixtas)
+                if (!evaluaciones.isEmpty()) {
+                    calificacionRepository.save(Calificacion.builder()
+                            .evaluacion(evaluaciones.get(0)).estudiante(pedro).nota(14.0)
+                            .comentarioDocente("Buen trabajo, pero puedes mejorar").fechaRegistro(LocalDate.now().minusDays(15)).build());
+                    
+                    if (evaluaciones.size() > 1) {
+                        calificacionRepository.save(Calificacion.builder()
+                                .evaluacion(evaluaciones.get(1)).estudiante(pedro).nota(17.0)
+                                .comentarioDocente("Excelente mejora en álgebra").fechaRegistro(LocalDate.now().minusDays(2)).build());
+                    }
+                }
+
+                // Asistencias Pedro (Para que el panel muestre % de asistencia)
+                for (int i = 1; i <= 10; i++) {
+                    TipoAsistencia tipo = (i == 5) ? TipoAsistencia.FALTA : TipoAsistencia.PRESENTE;
+                    asistenciaRepository.save(Asistencia.builder()
+                            .estudiante(pedro).curso(cursoMatematicas)
+                            .fecha(LocalDate.now().minusDays(i)).tipo(tipo).build());
+                }
+            }
+
+            // INYECTAR DATOS PARA LUCIA (ESTUDIANTE 2)
+            if (lucia != null && matriculaRepository.findByEstudianteId(lucia.getId()).isEmpty()) {
+                matriculaRepository.save(Matricula.builder()
+                        .estudiante(lucia).grado(cursoMatematicas.getGrado()).seccion("B").estado(EstadoMatricula.ACTIVA)
+                        .fechaMatricula(LocalDate.now().minusMonths(2)).build());
+                if (!evaluaciones.isEmpty()) {
+                    calificacionRepository.save(Calificacion.builder()
+                            .evaluacion(evaluaciones.get(0)).estudiante(lucia).nota(19.0)
+                            .comentarioDocente("Excelente!").fechaRegistro(LocalDate.now().minusDays(15)).build());
+                }
+                for (int i = 1; i <= 10; i++) {
+                    TipoAsistencia tipo = TipoAsistencia.PRESENTE;
+                    asistenciaRepository.save(Asistencia.builder()
+                            .estudiante(lucia).curso(cursoMatematicas)
+                            .fecha(LocalDate.now().minusDays(i)).tipo(tipo).build());
+                }
+            }
+
+            // INYECTAR DATOS PARA MARCOS (ESTUDIANTE 3)
+            if (marcos != null && matriculaRepository.findByEstudianteId(marcos.getId()).isEmpty()) {
+                matriculaRepository.save(Matricula.builder()
+                        .estudiante(marcos).grado(cursoMatematicas.getGrado()).seccion("B").estado(EstadoMatricula.ACTIVA)
+                        .fechaMatricula(LocalDate.now().minusMonths(2)).build());
+                if (!evaluaciones.isEmpty()) {
+                    calificacionRepository.save(Calificacion.builder()
+                            .evaluacion(evaluaciones.get(0)).estudiante(marcos).nota(11.0)
+                            .comentarioDocente("Debes esforzarte más.").fechaRegistro(LocalDate.now().minusDays(15)).build());
+                }
+                for (int i = 1; i <= 10; i++) {
+                    TipoAsistencia tipo = (i % 2 == 0) ? TipoAsistencia.FALTA : TipoAsistencia.PRESENTE;
+                    asistenciaRepository.save(Asistencia.builder()
+                            .estudiante(marcos).curso(cursoMatematicas)
+                            .fecha(LocalDate.now().minusDays(i)).tipo(tipo).build());
+                }
+            }
+            
+            System.out.println(" Datos Mock inyectados exitosamente para estudiantes y docentes");
         }
     }
 }
