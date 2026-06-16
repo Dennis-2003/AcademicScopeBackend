@@ -29,7 +29,7 @@ class AuthControllerIntegrationTest {
     void deberia_login_exitoso_y_devolver_token() throws Exception {
         LoginRequest request = new LoginRequest();
         request.setUsername("dennis@academicscope.com");
-        request.setPassword("Admin2026");
+        request.setPassword("Dennis@2026!");
 
         mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -56,7 +56,7 @@ class AuthControllerIntegrationTest {
     void deberia_acceder_a_endpoint_protegido_con_token() throws Exception {
         LoginRequest request = new LoginRequest();
         request.setUsername("dennis@academicscope.com");
-        request.setPassword("Admin2026");
+        request.setPassword("Dennis@2026!");
 
         String response = mockMvc.perform(post("/api/auth/login")
                 .contentType(MediaType.APPLICATION_JSON)

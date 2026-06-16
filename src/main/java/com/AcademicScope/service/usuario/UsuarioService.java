@@ -89,6 +89,8 @@ public class UsuarioService {
             throw new RuntimeException("Contraseña actual incorrecta");
         }
 
+        PasswordValidator.validate(passwordNuevo);
+
         usuario.setPassword(passwordEncoder.encode(passwordNuevo));
         usuario.setPrimerIngreso(false);
         usuarioRepository.save(usuario);

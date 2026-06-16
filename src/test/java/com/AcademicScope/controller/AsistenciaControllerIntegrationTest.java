@@ -34,8 +34,8 @@ class AsistenciaControllerIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        docenteToken = obtenerToken("profesor.mario@academicscope.com", "Docente2026");
-        estudianteToken = obtenerToken("estudiante.pedro@academicscope.com", "Estudiante2026");
+        docenteToken = obtenerToken("profesor.mario@academicscope.com", "Profe@2026!");
+        estudianteToken = obtenerToken("estudiante.pedro@academicscope.com", "Estu@2026!");
     }
 
     private String obtenerToken(String username, String password) throws Exception {

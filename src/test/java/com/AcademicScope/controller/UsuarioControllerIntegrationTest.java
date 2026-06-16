@@ -36,8 +36,8 @@ class UsuarioControllerIntegrationTest {
 
     @BeforeAll
     void setUp() throws Exception {
-        adminToken = loginAndGetToken("dennis@academicscope.com", "Admin2026");
-        estudianteToken = loginAndGetToken("estudiante.pedro@academicscope.com", "Estudiante2026");
+        adminToken = loginAndGetToken("dennis@academicscope.com", "Dennis@2026!");
+        estudianteToken = loginAndGetToken("estudiante.pedro@academicscope.com", "Estu@2026!");
     }
 
     private String loginAndGetToken(String username, String password) throws Exception {
@@ -115,8 +115,8 @@ class UsuarioControllerIntegrationTest {
     @Test
     void deberia_cambiar_password_exitosamente() throws Exception {
         CambioPasswordDTO cambio = CambioPasswordDTO.builder()
-                .dni("11111111").passwordActual("Estudiante2026")
-                .passwordNuevo("nuevaPass123").build();
+                .dni("11111111").passwordActual("Estu@2026!")
+                .passwordNuevo("Nueva@2026!").build();
 
         mockMvc.perform(put("/api/usuarios/cambiar-password")
                 .header("Authorization", "Bearer " + estudianteToken)

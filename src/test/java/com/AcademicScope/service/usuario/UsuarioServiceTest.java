@@ -167,14 +167,14 @@ class UsuarioServiceTest {
     void deberia_cambiar_password_correctamente() {
         when(usuarioRepository.findByDni("12345678")).thenReturn(Optional.of(usuario));
         when(passwordEncoder.matches("actual", "encoded")).thenReturn(true);
-        when(passwordEncoder.encode("nueva")).thenReturn("nuevaEncoded");
+        when(passwordEncoder.encode("Nueva@2026!")).thenReturn("nuevaEncoded");
         when(usuarioRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        usuarioService.cambiarPassword("12345678", "actual", "nueva");
+        usuarioService.cambiarPassword("12345678", "actual", "Nueva@2026!");
 
         verify(usuarioRepository).findByDni("12345678");
         verify(passwordEncoder).matches("actual", "encoded");
-        verify(passwordEncoder).encode("nueva");
+        verify(passwordEncoder).encode("Nueva@2026!");
         verify(usuarioRepository).save(usuarioCaptor.capture());
         assertFalse(usuarioCaptor.getValue().getPrimerIngreso());
         assertEquals("nuevaEncoded", usuarioCaptor.getValue().getPassword());
@@ -186,7 +186,18 @@ class UsuarioServiceTest {
         when(passwordEncoder.matches("incorrecta", "encoded")).thenReturn(false);
 
         RuntimeException ex = assertThrows(RuntimeException.class,
-                () -> usuarioService.cambiarPassword("12345678", "incorrecta", "nueva"));
+                () -> usuarioService.cambiarPassword("12345678", "incorrecta", "Nueva@2026!"));
         assertEquals("Contraseña actual incorrecta", ex.getMessage());
+    }
+
+    @Test
+    void deberia_lanzar_excepcion_si_password_nueva_no_cumple_requisitos() {
+        when(usuarioRepository.findByDni("12345678")).thenReturn(Optional.of(usuario));
+        when(passwordEncoder.matches("actual", "encoded")).thenReturn(true);
+
+        RuntimeException ex = assertThrows(RuntimeException.class,
+                () -> usuarioService.cambiarPassword("12345678", "actual", "corta"));
+
+        assertEquals("La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial (@ ! . _ -)", ex.getMessage());
     }
 }
