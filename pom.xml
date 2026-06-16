@@ -73,6 +73,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>
 			<version>0.11.5</version>
@@ -88,6 +93,12 @@
 			<artifactId>jjwt-jackson</artifactId>
 			<version>0.11.5</version>
 			<scope>runtime</scope>
+		</dependency>
+		<!-- Cloudinary -->
+		<dependency>
+			<groupId>com.cloudinary</groupId>
+			<artifactId>cloudinary-http44</artifactId>
+			<version>1.36.0</version>
 		</dependency>
 	</dependencies>
 
@@ -118,6 +129,71 @@
 						</path>
 					</annotationProcessorPaths>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.12</version>
+				<configuration>
+					<excludes>
+						<exclude>**/dto/**</exclude>
+						<exclude>**/model/**</exclude>
+						<exclude>**/enums/**</exclude>
+						<exclude>**/auth/dto/**</exclude>
+						<exclude>**/auth/filter/**</exclude>
+						<exclude>**/config/**</exclude>
+						<exclude>**/DataInitializer.*</exclude>
+						<exclude>**/controller/horario/**</exclude>
+						<exclude>**/controller/notificacion/**</exclude>
+						<exclude>**/controller/matricula/**</exclude>
+						<exclude>**/controller/comportamiento/**</exclude>
+						<exclude>**/controller/academico/CursoController.*</exclude>
+						<exclude>**/controller/academico/PeriodoAcademicoController.*</exclude>
+						<exclude>**/controller/evaluacion/EvaluacionController.*</exclude>
+						<exclude>**/controller/asignacion/**</exclude>
+						<exclude>**/controller/comunicado/**</exclude>
+						<exclude>**/controller/dashboard/**</exclude>
+						<exclude>**/controller/institucion/**</exclude>
+						<exclude>**/controller/finanzas/**</exclude>
+						<exclude>**/controller/recurso/**</exclude>
+						<exclude>**/service/CloudinaryService.*</exclude>
+					</excludes>
+				</configuration>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>check</id>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<rule>
+									<element>BUNDLE</element>
+									<limits>
+										<limit>
+											<counter>LINE</counter>
+											<value>COVEREDRATIO</value>
+											<minimum>0.80</minimum>
+										</limit>
+									</limits>
+								</rule>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

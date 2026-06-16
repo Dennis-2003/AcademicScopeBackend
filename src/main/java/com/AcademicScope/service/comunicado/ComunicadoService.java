@@ -22,7 +22,8 @@ import java.util.UUID;
 public class ComunicadoService {
 
     private final ComunicadoRepository comunicadoRepository;
-    private final String UPLOAD_DIR = "uploads/";
+
+    private final com.AcademicScope.service.CloudinaryService cloudinaryService;
 
     public List<Comunicado> listarComunicados() {
         return comunicadoRepository.findAllByOrderByFechaDescIdDesc();
@@ -36,21 +37,13 @@ public class ComunicadoService {
 
         if (archivo != null && !archivo.isEmpty()) {
             try {
-                File dir = new File(UPLOAD_DIR);
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
                 String originalName = archivo.getOriginalFilename();
-                String extension = originalName != null && originalName.contains(".") ? originalName.substring(originalName.lastIndexOf(".")) : "";
-                String uniqueName = UUID.randomUUID().toString() + extension;
-                
-                Path filepath = Paths.get(UPLOAD_DIR, uniqueName);
-                archivo.transferTo(filepath);
+                String fileUrl = cloudinaryService.uploadFile(archivo, "academicscope/comunicados");
 
                 comunicado.setArchivoNombre(originalName);
-                comunicado.setArchivoUrl(uniqueName); // Guardamos solo el nombre único
+                comunicado.setArchivoUrl(fileUrl); // Guardamos la URL pública de Cloudinary
             } catch (IOException e) {
-                throw new RuntimeException("Error al guardar el archivo", e);
+                throw new RuntimeException("Error al guardar el archivo en Cloudinary", e);
             }
         }
 

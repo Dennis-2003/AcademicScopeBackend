@@ -53,26 +53,17 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
+    private final com.AcademicScope.service.CloudinaryService cloudinaryService;
+
     public Usuario subirAvatar(Long id, MultipartFile archivo) {
         Usuario usuario = obtenerPorId(id);
         if (archivo != null && !archivo.isEmpty()) {
             try {
-                String UPLOAD_DIR = "uploads/avatars/";
-                File dir = new File(UPLOAD_DIR);
-                if (!dir.exists()) {
-                    dir.mkdirs();
-                }
-                String originalName = archivo.getOriginalFilename();
-                String extension = originalName != null && originalName.contains(".") ? originalName.substring(originalName.lastIndexOf(".")) : "";
-                String uniqueName = UUID.randomUUID().toString() + extension;
-                
-                Path filepath = Paths.get(UPLOAD_DIR, uniqueName);
-                archivo.transferTo(filepath);
-
-                usuario.setAvatarUrl(uniqueName);
+                String avatarUrl = cloudinaryService.uploadFile(archivo, "academicscope/avatars");
+                usuario.setAvatarUrl(avatarUrl);
                 return usuarioRepository.save(usuario);
             } catch (IOException e) {
-                throw new RuntimeException("Error al guardar el avatar", e);
+                throw new RuntimeException("Error al guardar el avatar en Cloudinary", e);
             }
         }
         return usuario;

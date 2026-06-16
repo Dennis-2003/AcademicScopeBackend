@@ -109,7 +109,7 @@ public class AsistenciaService {
                 boolean yaNotificado = notificacionRepository
                         .findByUsuarioIdOrderByFechaEnvioDesc(tutor.getId())
                         .stream().anyMatch(n ->
-                                n.getTitulo().contains("Faltas") &&
+                                n.getTitulo().contains("faltas") &&
                                 n.getMensaje().contains(estudiante.getNombre()));
 
                 if (!yaNotificado) {
