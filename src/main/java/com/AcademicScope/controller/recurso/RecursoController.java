@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -19,6 +20,15 @@ public class RecursoController {
     @PostMapping
     public ResponseEntity<Recurso> crear(@RequestBody Recurso recurso) {
         return new ResponseEntity<>(recursoService.crear(recurso), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/upload")
+    public ResponseEntity<Recurso> subir(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("curso") Long cursoId,
+            @RequestParam("titulo") String titulo,
+            @RequestParam("tipo") String tipo) {
+        return ResponseEntity.ok(recursoService.subirRecurso(file, cursoId, titulo, tipo));
     }
 
     @GetMapping("/curso/{cursoId}")
