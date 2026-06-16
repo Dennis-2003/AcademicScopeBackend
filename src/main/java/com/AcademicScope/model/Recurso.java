@@ -23,6 +23,7 @@ public class Recurso {
     @Column(nullable = false)
     private String tipo; // PDF, VIDEO, DOCUMENTO, LINK
 
+    @Lob
     @Column(nullable = false)
     private String url;
 
