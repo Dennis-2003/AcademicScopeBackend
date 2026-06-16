@@ -38,7 +38,7 @@ public class ComunicadoService {
         if (archivo != null && !archivo.isEmpty()) {
             try {
                 String originalName = archivo.getOriginalFilename();
-                String fileUrl = cloudinaryService.uploadFile(archivo, "academicscope/comunicados");
+                String fileUrl = cloudinaryService.uploadFile(archivo, "academicscope/comunicados", "auto");
 
                 comunicado.setArchivoNombre(originalName);
                 comunicado.setArchivoUrl(fileUrl); // Guardamos la URL pública de Cloudinary

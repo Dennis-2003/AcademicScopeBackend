@@ -59,7 +59,7 @@ public class UsuarioService {
         Usuario usuario = obtenerPorId(id);
         if (archivo != null && !archivo.isEmpty()) {
             try {
-                String avatarUrl = cloudinaryService.uploadFile(archivo, "academicscope/avatars");
+                String avatarUrl = cloudinaryService.uploadFile(archivo, "academicscope/avatars", "auto");
                 usuario.setAvatarUrl(avatarUrl);
                 return usuarioRepository.save(usuario);
             } catch (IOException e) {
