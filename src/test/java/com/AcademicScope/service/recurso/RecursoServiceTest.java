@@ -15,6 +15,8 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
+import org.springframework.test.util.ReflectionTestUtils;
+
 @ExtendWith(MockitoExtension.class)
 class RecursoServiceTest {
 
@@ -27,11 +29,12 @@ class RecursoServiceTest {
 
     @BeforeEach
     void setUp() {
+        ReflectionTestUtils.setField(recursoService, "uploadDir", "uploads/");
         recurso = Recurso.builder()
                 .id(1L)
                 .titulo("Guía de estudio")
                 .tipo("PDF")
-                .url("https://recursos.com/guia.pdf")
+                .url("test-file.pdf")
                 .build();
     }
 
@@ -72,6 +75,7 @@ class RecursoServiceTest {
 
     @Test
     void deberia_eliminar_recurso() {
+        when(recursoRepository.findById(1L)).thenReturn(Optional.of(recurso));
         recursoService.eliminar(1L);
         verify(recursoRepository).deleteById(1L);
     }

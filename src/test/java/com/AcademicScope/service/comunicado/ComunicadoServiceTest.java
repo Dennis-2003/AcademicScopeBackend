@@ -71,7 +71,7 @@ class ComunicadoServiceTest {
         Comunicado resultado = comunicadoService.crearComunicado(comunicado, archivo);
 
         assertEquals("documento.pdf", resultado.getArchivoNombre());
-        assertEquals("https://stub.cloudinary.com/academicscope/comunicados/documento.pdf", resultado.getArchivoUrl());
+        assertEquals("https://stub.cloudinary.com/auto/academicscope/comunicados/documento.pdf", resultado.getArchivoUrl());
         verify(comunicadoRepository).save(comunicado);
     }
 
