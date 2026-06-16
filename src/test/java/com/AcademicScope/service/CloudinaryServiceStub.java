@@ -11,7 +11,7 @@ public class CloudinaryServiceStub extends CloudinaryService {
     }
 
     @Override
-    public String uploadFile(MultipartFile file, String folder) throws IOException {
-        return "https://stub.cloudinary.com/" + folder + "/" + file.getOriginalFilename();
+    public String uploadFile(MultipartFile file, String folder, String resourceType) throws IOException {
+        return "https://stub.cloudinary.com/" + resourceType + "/" + folder + "/" + file.getOriginalFilename();
     }
 }
