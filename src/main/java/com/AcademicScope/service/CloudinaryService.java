@@ -16,7 +16,7 @@ public class CloudinaryService {
 
     private final Cloudinary cloudinary;
 
-    public String uploadFile(MultipartFile file, String folder) throws IOException {
+    public String uploadFile(MultipartFile file, String folder, String resourceType) throws IOException {
         String originalName = file.getOriginalFilename();
         String extension = originalName != null && originalName.contains(".") ? originalName.substring(originalName.lastIndexOf(".")) : "";
         String uniqueName = UUID.randomUUID().toString();
@@ -24,7 +24,7 @@ public class CloudinaryService {
         Map<String, Object> params = ObjectUtils.asMap(
                 "folder", folder,
                 "public_id", uniqueName,
-                "resource_type", "auto" // Auto detecta si es imagen, pdf, video, etc.
+                "resource_type", resourceType
         );
 
         Map<?, ?> uploadResult = cloudinary.uploader().upload(file.getBytes(), params);

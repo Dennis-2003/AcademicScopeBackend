@@ -28,7 +28,8 @@ public class RecursoService {
 
     public Recurso subirRecurso(MultipartFile file, Long cursoId, String titulo, String tipo) {
         try {
-            String url = cloudinaryService.uploadFile(file, "academicscope/recursos");
+            String tipoCloudinary = tipo.equalsIgnoreCase("PDF") ? "raw" : "auto";
+            String url = cloudinaryService.uploadFile(file, "academicscope/recursos", tipoCloudinary);
             Curso curso = cursoRepository.findById(cursoId)
                     .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
 
