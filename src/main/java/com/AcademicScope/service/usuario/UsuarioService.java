@@ -53,6 +53,11 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
+    public Usuario obtenerPorEmail(String email) {
+        return usuarioRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ese email"));
+    }
+
     public Usuario subirAvatar(Long id, MultipartFile archivo) {
         Usuario usuario = obtenerPorId(id);
         if (archivo != null && !archivo.isEmpty()) {
