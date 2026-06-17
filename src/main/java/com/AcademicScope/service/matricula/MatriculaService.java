@@ -19,7 +19,9 @@ public class MatriculaService {
     public Matricula matricular(Matricula matricula) {
         matricula.setEstado(EstadoMatricula.ACTIVA);
         matricula.setFechaMatricula(LocalDate.now());
-        return matriculaRepository.save(matricula);
+        matricula = matriculaRepository.save(matricula);
+        return matriculaRepository.findById(matricula.getId())
+                .orElseThrow(() -> new RuntimeException("Error al recuperar matrícula"));
     }
 
     public Matricula retirar(Long id) {
