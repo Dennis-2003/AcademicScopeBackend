@@ -45,8 +45,8 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.obtenerPorId(id));
     }
 
-    @GetMapping("/by-email/{email:.+}")
-    public ResponseEntity<Usuario> obtenerPorEmail(@PathVariable String email) {
+    @GetMapping("/by-email")
+    public ResponseEntity<Usuario> obtenerPorEmail(@RequestParam String email) {
         return ResponseEntity.ok(usuarioService.obtenerPorEmail(email));
     }
 
