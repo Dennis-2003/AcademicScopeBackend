@@ -45,6 +45,11 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.obtenerPorId(id));
     }
 
+    @GetMapping("/by-email/{email}")
+    public ResponseEntity<Usuario> obtenerPorEmail(@PathVariable String email) {
+        return ResponseEntity.ok(usuarioService.obtenerPorEmail(email));
+    }
+
     @GetMapping
     public ResponseEntity<List<Usuario>> listar() {
         return ResponseEntity.ok(usuarioService.listarTodos());
