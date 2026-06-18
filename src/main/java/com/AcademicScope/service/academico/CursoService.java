@@ -15,11 +15,13 @@ public class CursoService {
     private final CursoRepository cursoRepository;
 
     public Curso crear(Curso curso) {
-        return cursoRepository.save(curso);
+        curso = cursoRepository.save(curso);
+        return cursoRepository.findById(curso.getId())
+                .orElseThrow(() -> new RuntimeException("Error al recuperar curso"));
     }
 
     public Curso actualizar(Long id, Curso curso) {
-        return cursoRepository.findById(id).map(c -> {
+        Curso actualizado = cursoRepository.findById(id).map(c -> {
             c.setNombre(curso.getNombre());
             c.setDescripcion(curso.getDescripcion());
             c.setCodigo(curso.getCodigo());
@@ -28,6 +30,8 @@ public class CursoService {
             c.setDocente(curso.getDocente());
             return cursoRepository.save(c);
         }).orElseThrow(() -> new RuntimeException("Curso no encontrado"));
+        return cursoRepository.findById(actualizado.getId())
+                .orElseThrow(() -> new RuntimeException("Error al recuperar curso"));
     }
 
     public Curso obtenerPorId(Long id) {

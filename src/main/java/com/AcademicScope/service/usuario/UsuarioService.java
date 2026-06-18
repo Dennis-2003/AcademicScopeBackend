@@ -3,17 +3,14 @@ package com.AcademicScope.service.usuario;
 import com.AcademicScope.repository.usuario.UsuarioRepository;
 import com.AcademicScope.model.Usuario;
 import com.AcademicScope.enums.RolUsuario;
+import com.AcademicScope.service.CloudinaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -21,6 +18,7 @@ public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final CloudinaryService cloudinaryService;
 
     public Usuario crear(Usuario usuario) {
         usuario.setPassword(passwordEncoder.encode(usuario.getDni()));
@@ -38,7 +36,7 @@ public class UsuarioService {
             u.setDireccion(usuario.getDireccion());
             u.setRol(usuario.getRol());
             u.setActivo(usuario.getActivo());
-            u.setTutor(usuario.getTutor()); // Added so the tutor actually gets saved
+            u.setTutor(usuario.getTutor());
             return usuarioRepository.save(u);
         }).orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
@@ -57,8 +55,6 @@ public class UsuarioService {
         return usuarioRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado con ese email"));
     }
-
-    private final com.AcademicScope.service.CloudinaryService cloudinaryService;
 
     public Usuario subirAvatar(Long id, MultipartFile archivo) {
         Usuario usuario = obtenerPorId(id);

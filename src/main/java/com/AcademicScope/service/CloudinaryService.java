@@ -53,4 +53,26 @@ public class CloudinaryService {
     public void deleteFile(String publicId) throws IOException {
         cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
     }
+
+    public void eliminarArchivo(String url) {
+        try {
+            if (url == null || url.isEmpty()) return;
+            String publicId = extraerPublicId(url);
+            if (publicId != null) {
+                cloudinary.uploader().destroy(publicId, ObjectUtils.emptyMap());
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error al eliminar archivo de Cloudinary: " + e.getMessage());
+        }
+    }
+
+    private String extraerPublicId(String url) {
+        if (url == null || !url.contains("/")) return null;
+        String[] parts = url.split("/");
+        String last = parts[parts.length - 1];
+        if (last.contains(".")) {
+            last = last.substring(0, last.lastIndexOf("."));
+        }
+        return last;
+    }
 }

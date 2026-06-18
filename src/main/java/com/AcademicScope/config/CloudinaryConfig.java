@@ -11,11 +11,9 @@ import java.util.Map;
 
 @Configuration
 @ConfigurationProperties(prefix = "cloudinary")
-@Data // Lombok generará los getters y setters automáticamente para mapear el
-      // properties
+@Data
 public class CloudinaryConfig {
 
-    // Spring Boot mapeará automáticamente cloud-name, cloud_name, apiKey, etc.
     private String cloudName;
     private String apiKey;
     private String apiSecret;
@@ -23,9 +21,9 @@ public class CloudinaryConfig {
     @Bean
     public Cloudinary cloudinary() {
         Map<String, String> config = new HashMap<>();
-        config.put("cloud_name", this.cloudName);
-        config.put("api_key", this.apiKey);
-        config.put("api_secret", this.apiSecret);
+        config.put("cloud_name", cloudName);
+        config.put("api_key", apiKey);
+        config.put("api_secret", apiSecret);
         return new Cloudinary(config);
     }
 }

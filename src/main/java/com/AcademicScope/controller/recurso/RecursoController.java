@@ -28,7 +28,7 @@ public class RecursoController {
             @RequestParam("curso") Long cursoId,
             @RequestParam("titulo") String titulo,
             @RequestParam("tipo") String tipo) {
-        return ResponseEntity.ok(recursoService.subirRecurso(file, cursoId, titulo, tipo));
+        return new ResponseEntity<>(recursoService.subirRecurso(file, cursoId, titulo, tipo), HttpStatus.CREATED);
     }
 
     @GetMapping("/curso/{cursoId}")
