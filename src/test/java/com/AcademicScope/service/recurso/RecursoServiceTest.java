@@ -22,6 +22,8 @@ class RecursoServiceTest {
 
     @Mock
     private RecursoRepository recursoRepository;
+    @Mock
+    private com.AcademicScope.service.CloudinaryService cloudinaryService;
     @InjectMocks
     private RecursoService recursoService;
 
@@ -29,7 +31,6 @@ class RecursoServiceTest {
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(recursoService, "uploadDir", "uploads/");
         recurso = Recurso.builder()
                 .id(1L)
                 .titulo("Guía de estudio")
@@ -76,6 +77,7 @@ class RecursoServiceTest {
     @Test
     void deberia_eliminar_recurso() {
         when(recursoRepository.findById(1L)).thenReturn(Optional.of(recurso));
+        doNothing().when(cloudinaryService).eliminarArchivo(anyString());
         recursoService.eliminar(1L);
         verify(recursoRepository).deleteById(1L);
     }

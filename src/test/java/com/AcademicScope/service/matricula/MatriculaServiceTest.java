@@ -48,6 +48,7 @@ class MatriculaServiceTest {
     @Test
     void deberia_matricular_con_estado_activo_y_fecha_actual() {
         when(matriculaRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(matriculaRepository.findById(any())).thenReturn(Optional.of(matricula));
 
         Matricula resultado = matriculaService.matricular(matricula);
 

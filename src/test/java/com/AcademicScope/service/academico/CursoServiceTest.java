@@ -44,6 +44,7 @@ class CursoServiceTest {
     @Test
     void deberia_crear_curso() {
         when(cursoRepository.save(any())).thenReturn(curso);
+        when(cursoRepository.findById(any())).thenReturn(Optional.of(curso));
 
         Curso resultado = cursoService.crear(curso);
 
@@ -61,7 +62,10 @@ class CursoServiceTest {
                 .build();
 
         when(cursoRepository.findById(1L)).thenReturn(Optional.of(curso));
-        when(cursoRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(cursoRepository.save(any())).thenAnswer(i -> {
+            Curso arg = i.getArgument(0);
+            return arg;
+        });
 
         Curso resultado = cursoService.actualizar(1L, actualizado);
 
