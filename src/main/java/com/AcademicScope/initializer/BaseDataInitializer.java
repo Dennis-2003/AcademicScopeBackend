@@ -1,4 +1,4 @@
-package com.AcademicScope;
+package com.AcademicScope.initializer;
 
 import com.AcademicScope.enums.RolUsuario;
 import com.AcademicScope.enums.TipoCurso;
@@ -11,20 +11,22 @@ import com.AcademicScope.repository.academico.GradoRepository;
 import com.AcademicScope.repository.institucion.InstitucionRepository;
 import com.AcademicScope.repository.usuario.UsuarioRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.env.Environment;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 import java.util.List;
 
-import lombok.extern.slf4j.Slf4j;
-
 @Component
+@Order(1) // Se ejecuta primero
 @RequiredArgsConstructor
 @Slf4j
-public class DataInitializer implements CommandLineRunner {
+@SuppressWarnings("null")
+public class BaseDataInitializer implements CommandLineRunner {
 
     private final UsuarioRepository usuarioRepository;
     private final GradoRepository gradoRepository;
@@ -35,10 +37,11 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
+        log.info("--- Iniciando carga de Datos Base ---");
         crearInstitucionBase();
-        crearUsuarios();
+        crearAdmins();
         crearGradosYCursos();
-        log.info(" Inicialización completada");
+        log.info("--- Carga de Datos Base completada ---");
     }
 
     private void crearInstitucionBase() {
@@ -48,37 +51,15 @@ public class DataInitializer implements CommandLineRunner {
                     .ruc("10000000001")
                     .planSuscripcion("PREMIUM")
                     .build());
+            log.info("Institución base creada.");
         }
     }
 
-    private void crearUsuarios() {
-        // Administradores del Equipo leídos desde el .env
+    private void crearAdmins() {
         crearUsuarioSiNoExiste(env.getProperty("ADMIN1_EMAIL", "dennis@academicscope.com"), env.getProperty("ADMIN1_DNI", "70000001"), env.getProperty("ADMIN1_NOMBRE", "Dennis"), env.getProperty("ADMIN1_APELLIDO", "Admin"), env.getProperty("ADMIN1_PASSWORD", "Dennis@2026!"), RolUsuario.ADMIN, null);
         crearUsuarioSiNoExiste(env.getProperty("ADMIN2_EMAIL", "massiel@academicscope.com"), env.getProperty("ADMIN2_DNI", "70000002"), env.getProperty("ADMIN2_NOMBRE", "Massiel"), env.getProperty("ADMIN2_APELLIDO", "Admin"), env.getProperty("ADMIN2_PASSWORD", "Massiel@2026!"), RolUsuario.ADMIN, null);
         crearUsuarioSiNoExiste(env.getProperty("ADMIN3_EMAIL", "yadira@academicscope.com"), env.getProperty("ADMIN3_DNI", "70000003"), env.getProperty("ADMIN3_NOMBRE", "Yadira"), env.getProperty("ADMIN3_APELLIDO", "Admin"), env.getProperty("ADMIN3_PASSWORD", "Yadira@2026!"), RolUsuario.ADMIN, null);
         crearUsuarioSiNoExiste(env.getProperty("ADMIN4_EMAIL", "edmar@academicscope.com"), env.getProperty("ADMIN4_DNI", "70000004"), env.getProperty("ADMIN4_NOMBRE", "Edmar"), env.getProperty("ADMIN4_APELLIDO", "Admin"), env.getProperty("ADMIN4_PASSWORD", "Edmar@2026!"), RolUsuario.ADMIN, null);
-
-        // Docentes Generados (Mock) leídos desde el .env
-        crearUsuarioSiNoExiste(env.getProperty("DOCENTE1_EMAIL", "profesor.mario@academicscope.com"), env.getProperty("DOCENTE1_DNI", "12345678"), env.getProperty("DOCENTE1_NOMBRE", "Mario"), env.getProperty("DOCENTE1_APELLIDO", "Gutierrez"), env.getProperty("DOCENTE1_PASSWORD", "Profe@2026!"), RolUsuario.DOCENTE, null);
-        crearUsuarioSiNoExiste(env.getProperty("DOCENTE2_EMAIL", "profesora.laura@academicscope.com"), env.getProperty("DOCENTE2_DNI", "87654321"), env.getProperty("DOCENTE2_NOMBRE", "Laura"), env.getProperty("DOCENTE2_APELLIDO", "Condori"), env.getProperty("DOCENTE2_PASSWORD", "Profe@2026!"), RolUsuario.DOCENTE, null);
-        crearUsuarioSiNoExiste(env.getProperty("DOCENTE3_EMAIL", "profesor.carlos@academicscope.com"), env.getProperty("DOCENTE3_DNI", "11223344"), env.getProperty("DOCENTE3_NOMBRE", "Carlos"), env.getProperty("DOCENTE3_APELLIDO", "Perez"), env.getProperty("DOCENTE3_PASSWORD", "Profe@2026!"), RolUsuario.DOCENTE, null);
-
-        // Tutores Generados (Mock)
-        crearUsuarioSiNoExiste(env.getProperty("TUTOR1_EMAIL", "tutor.juan@academicscope.com"), env.getProperty("TUTOR1_DNI", "33333333"), env.getProperty("TUTOR1_NOMBRE", "Juan"), env.getProperty("TUTOR1_APELLIDO", "Quispe"), env.getProperty("TUTOR1_PASSWORD", "Tutor@2026!"), RolUsuario.TUTOR, null);
-        crearUsuarioSiNoExiste(env.getProperty("TUTOR2_EMAIL", "tutora.ana@academicscope.com"), env.getProperty("TUTOR2_DNI", "44444444"), env.getProperty("TUTOR2_NOMBRE", "Ana"), env.getProperty("TUTOR2_APELLIDO", "Mamani"), env.getProperty("TUTOR2_PASSWORD", "Tutor@2026!"), RolUsuario.TUTOR, null);
-        crearUsuarioSiNoExiste(env.getProperty("TUTOR3_EMAIL", "tutor.luis@academicscope.com"), env.getProperty("TUTOR3_DNI", "55555555"), env.getProperty("TUTOR3_NOMBRE", "Luis"), env.getProperty("TUTOR3_APELLIDO", "Sanchez"), env.getProperty("TUTOR3_PASSWORD", "Tutor@2026!"), RolUsuario.TUTOR, null);
-        crearUsuarioSiNoExiste(env.getProperty("TUTOR4_EMAIL", "tutor.Smith@academicscope.com"), env.getProperty("TUTOR4_DNI", "71967699"), env.getProperty("TUTOR4_NOMBRE", "Smith"), env.getProperty("TUTOR4_APELLIDO", "Quiroz"), env.getProperty("TUTOR4_PASSWORD", "Tutor@2026!"), RolUsuario.TUTOR, null);
-
-        // Obtener a los tutores recién creados para asignarlos a los estudiantes
-        Usuario tutor1 = usuarioRepository.findByDni(env.getProperty("TUTOR1_DNI", "33333333")).orElse(null);
-        Usuario tutor2 = usuarioRepository.findByDni(env.getProperty("TUTOR2_DNI", "44444444")).orElse(null);
-        Usuario tutor3 = usuarioRepository.findByDni(env.getProperty("TUTOR3_DNI", "55555555")).orElse(null);
-
-        // Estudiantes Generados (Mock) asignados a sus respectivos tutores
-        crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE1_EMAIL", "estudiante.pedro@academicscope.com"), env.getProperty("ESTUDIANTE1_DNI", "11111111"), env.getProperty("ESTUDIANTE1_NOMBRE", "Pedro"), env.getProperty("ESTUDIANTE1_APELLIDO", "Quispe"), env.getProperty("ESTUDIANTE1_PASSWORD", "Estu@2026!"), RolUsuario.ESTUDIANTE, tutor1);
-        crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE2_EMAIL", "estudiante.lucia@academicscope.com"), env.getProperty("ESTUDIANTE2_DNI", "22222222"), env.getProperty("ESTUDIANTE2_NOMBRE", "Lucia"), env.getProperty("ESTUDIANTE2_APELLIDO", "Quispe"), env.getProperty("ESTUDIANTE2_PASSWORD", "Estu@2026!"), RolUsuario.ESTUDIANTE, tutor1);
-        crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE3_EMAIL", "estudiante.marcos@academicscope.com"), env.getProperty("ESTUDIANTE3_DNI", "66666666"), env.getProperty("ESTUDIANTE3_NOMBRE", "Marcos"), env.getProperty("ESTUDIANTE3_APELLIDO", "Mamani"), env.getProperty("ESTUDIANTE3_PASSWORD", "Estu@2026!"), RolUsuario.ESTUDIANTE, tutor2);
-        crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE4_EMAIL", "estudiante.sofia@academicscope.com"), env.getProperty("ESTUDIANTE4_DNI", "77777777"), env.getProperty("ESTUDIANTE4_NOMBRE", "Sofia"), env.getProperty("ESTUDIANTE4_APELLIDO", "Sanchez"), env.getProperty("ESTUDIANTE4_PASSWORD", "Estu@2026!"), RolUsuario.ESTUDIANTE, tutor3);
     }
 
     private void crearGradosYCursos() {
@@ -121,6 +102,7 @@ public class DataInitializer implements CommandLineRunner {
                         .build());
             }
         }
+        log.info("Grados y cursos base verificados/creados.");
     }
 
     private void crearUsuarioSiNoExiste(String email, String dni, String nombre,
@@ -137,13 +119,7 @@ public class DataInitializer implements CommandLineRunner {
                     .activo(true)
                     .primerIngreso(true)
                     .build());
-            log.info("=========================================");
-            log.info(" NUEVO USUARIO CREADO: {} {}", nombre, apellido);
-            log.info(" Rol: {}", rol);
-            log.info(" Email: {}", email);
-            log.info(" Password (desde .env o default): {}", rawPassword);
-            log.info("=========================================");
+            log.info("Usuario Base creado: {} {} ({})", nombre, apellido, rol);
         }
     }
-
 }
