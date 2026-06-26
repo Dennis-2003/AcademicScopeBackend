@@ -21,6 +21,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/usuarios")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;

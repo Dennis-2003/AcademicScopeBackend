@@ -19,6 +19,7 @@ import org.springframework.http.ResponseEntity;
 @RestController
 @RequestMapping("/api/comunicados")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class ComunicadoController {
 
     private final ComunicadoService comunicadoService;
