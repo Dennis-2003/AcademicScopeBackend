@@ -67,7 +67,9 @@ public class DashboardService {
             // For legacy courses without a creation date, we assume they were always active.
             long nullDateCursos = todosCursos.stream().filter(c -> c.getFechaCreacion() == null).count();
             
-            cursosActivos.add((int) (countCursos + nullDateCursos));
+            int totalCursos = (int) (countCursos + nullDateCursos);
+            
+            cursosActivos.add(totalCursos);
 
             // Average attendance for this month
             List<Asistencia> asistenciasDelMes = todasAsistencias.stream()
@@ -77,7 +79,8 @@ public class DashboardService {
                 .collect(Collectors.toList());
 
             if (asistenciasDelMes.isEmpty()) {
-                asistenciaMedia.add(0); // If no data, return 0 or maybe carry over
+                // Si no hay datos, mostramos 0 para reflejar la realidad de la BD
+                asistenciaMedia.add(0); 
             } else {
                 long presentes = asistenciasDelMes.stream()
                     .filter(a -> a.getTipo() == TipoAsistencia.PRESENTE || a.getTipo() == TipoAsistencia.TARDANZA)
