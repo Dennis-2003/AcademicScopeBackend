@@ -30,7 +30,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Random;
+import java.security.SecureRandom;
 
 @Component
 @Order(2)
@@ -94,7 +94,7 @@ public class MockDataInitializer implements CommandLineRunner {
 
     private void inyectarDatosMasivos() {
         List<Usuario> tutores = usuarioRepository.findByRol(RolUsuario.TUTOR);
-        Random random = new Random();
+        SecureRandom random = new SecureRandom();
 
         for (int i = 1; i <= 20; i++) {
             Usuario tutorAleatorio = tutores.isEmpty() ? null : tutores.get(random.nextInt(tutores.size()));
@@ -110,7 +110,7 @@ public class MockDataInitializer implements CommandLineRunner {
         List<Usuario> docentes = usuarioRepository.findByRol(RolUsuario.DOCENTE);
         List<Grado> grados = gradoRepository.findAll();
         List<Curso> cursos = cursoRepository.findAll();
-        Random random = new Random();
+        SecureRandom random = new SecureRandom();
 
         if (grados.isEmpty() || cursos.isEmpty()) return;
 
@@ -139,7 +139,7 @@ public class MockDataInitializer implements CommandLineRunner {
     private void inyectarAsistenciasNotasYComportamientos() {
         List<Matricula> matriculas = matriculaRepository.findAll();
         List<Curso> cursos = cursoRepository.findAll();
-        Random random = new Random();
+        SecureRandom random = new SecureRandom();
 
         if (matriculas.isEmpty() || cursos.isEmpty()) return;
 
@@ -242,7 +242,7 @@ public class MockDataInitializer implements CommandLineRunner {
 
                 // Agregar entregas de alumnos
                 List<Usuario> estudiantes = usuarioRepository.findByRol(RolUsuario.ESTUDIANTE);
-                Random random = new Random();
+                SecureRandom random = new SecureRandom();
                 for (Usuario est : estudiantes) {
                     if (random.nextBoolean()) {
                         entregaAsignacionRepository.save(EntregaAsignacion.builder()
@@ -287,7 +287,7 @@ public class MockDataInitializer implements CommandLineRunner {
             List<Curso> cursos = cursoRepository.findAll();
             String[] dias = {"LUNES", "MARTES", "MIERCOLES", "JUEVES", "VIERNES"};
             String[] aulas = {"Aula 101", "Aula 102", "Aula 201", "Lab Ciencias", "Lab Cómputo"};
-            Random random = new Random();
+            SecureRandom random = new SecureRandom();
 
             for (Curso curso : cursos) {
                 // Asignar al curso 2 bloques de clases en días diferentes
@@ -337,7 +337,7 @@ public class MockDataInitializer implements CommandLineRunner {
                     .build());
 
             List<Usuario> estudiantes = usuarioRepository.findByRol(RolUsuario.ESTUDIANTE);
-            Random random = new Random();
+            SecureRandom random = new SecureRandom();
 
             for (Usuario estudiante : estudiantes) {
                 // Pago de matricula (todos pagados)
