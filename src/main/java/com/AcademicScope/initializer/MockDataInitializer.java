@@ -206,7 +206,7 @@ public class MockDataInitializer implements CommandLineRunner {
                             .tipo(tipoConducta)
                             .descripcion("Observación de conducta durante la clase de " + curso.getNombre())
                             .fecha(LocalDate.now().minusDays(random.nextInt(5)))
-                            .puntaje(tipoConducta == TipoConducta.VERDE ? 20 : (tipoConducta == TipoConducta.AMARILLO ? 15 : 10))
+                            .puntaje(tipoConducta == TipoConducta.VERDE ? 20 : tipoConducta == TipoConducta.AMARILLO ? 15 : 10)
                             .calificacionLiteral("A")
                             .build());
                 }
