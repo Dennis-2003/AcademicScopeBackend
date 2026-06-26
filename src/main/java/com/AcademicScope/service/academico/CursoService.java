@@ -10,6 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class CursoService {
 
     private final CursoRepository cursoRepository;
@@ -59,3 +60,4 @@ public class CursoService {
         cursoRepository.deleteById(id);
     }
 }
+

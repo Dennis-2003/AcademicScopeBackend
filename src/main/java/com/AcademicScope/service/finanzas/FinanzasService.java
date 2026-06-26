@@ -16,6 +16,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class FinanzasService {
 
     private final ConceptoPagoRepository conceptoPagoRepository;
@@ -69,3 +70,4 @@ public class FinanzasService {
         }
     }
 }
+

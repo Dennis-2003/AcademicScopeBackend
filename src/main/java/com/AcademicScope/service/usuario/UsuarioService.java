@@ -14,6 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
@@ -97,3 +98,4 @@ public class UsuarioService {
         usuarioRepository.save(usuario);
     }
 }
+

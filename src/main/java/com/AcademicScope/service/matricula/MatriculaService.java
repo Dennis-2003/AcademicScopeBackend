@@ -11,6 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class MatriculaService {
 
     private final MatriculaRepository matriculaRepository;
@@ -64,3 +65,4 @@ public class MatriculaService {
         matriculaRepository.deleteById(id);
     }
 }
+

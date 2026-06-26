@@ -10,6 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class ComportamientoService {
 
     private final ComportamientoRepository comportamientoRepository;
@@ -40,3 +41,4 @@ public class ComportamientoService {
         comportamientoRepository.deleteById(id);
     }
 }
+

@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class PeriodoAcademicoService {
 
     private final PeriodoAcademicoRepository periodoRepository;
@@ -45,3 +46,4 @@ public class PeriodoAcademicoService {
         periodoRepository.deleteById(id);
     }
 }
+

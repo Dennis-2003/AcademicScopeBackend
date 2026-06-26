@@ -19,6 +19,7 @@ import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class ComunicadoService {
 
     private final ComunicadoRepository comunicadoRepository;
@@ -55,3 +56,4 @@ public class ComunicadoService {
         comunicadoRepository.deleteById(id);
     }
 }
+

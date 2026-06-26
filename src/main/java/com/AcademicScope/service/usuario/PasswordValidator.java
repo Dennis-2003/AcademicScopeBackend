@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import java.util.regex.Pattern;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
+@SuppressWarnings("all")
 public class PasswordValidator {
 
     private static final Pattern PASSWORD_PATTERN = Pattern.compile(
@@ -26,3 +27,4 @@ public class PasswordValidator {
         }
     }
 }
+

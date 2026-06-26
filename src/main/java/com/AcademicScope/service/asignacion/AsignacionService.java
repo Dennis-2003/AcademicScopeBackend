@@ -12,6 +12,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class AsignacionService {
 
     private final AsignacionRepository asignacionRepository;
@@ -52,3 +53,4 @@ public class AsignacionService {
         return asignacionRepository.findByEstudianteId(estudianteId);
     }
 }
+

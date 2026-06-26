@@ -10,6 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class CalificacionService {
 
     private final CalificacionRepository calificacionRepository;
@@ -53,3 +54,4 @@ public class CalificacionService {
         return ColorPerformance.ROJO;
     }
 }
+

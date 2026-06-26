@@ -15,6 +15,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class RecursoService {
 
     private final RecursoRepository recursoRepository;
@@ -73,3 +74,4 @@ public class RecursoService {
         return recurso.getTitulo();
     }
 }
+

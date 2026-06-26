@@ -10,6 +10,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class NotificacionService {
 
     private final NotificacionRepository notificacionRepository;
@@ -48,3 +49,4 @@ public class NotificacionService {
         notificacionRepository.deleteById(id);
     }
 }
+

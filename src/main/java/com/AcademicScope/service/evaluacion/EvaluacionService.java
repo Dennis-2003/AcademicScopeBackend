@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class EvaluacionService {
 
     private final EvaluacionRepository evaluacionRepository;
@@ -48,3 +49,4 @@ public class EvaluacionService {
         evaluacionRepository.deleteById(id);
     }
 }
+

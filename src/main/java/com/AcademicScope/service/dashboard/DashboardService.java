@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class DashboardService {
 
     private final CursoRepository cursoRepository;
@@ -192,3 +193,4 @@ public class DashboardService {
             .build();
     }
 }
+

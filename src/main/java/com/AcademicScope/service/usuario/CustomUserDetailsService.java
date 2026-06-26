@@ -14,6 +14,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
@@ -33,3 +34,4 @@ public class CustomUserDetailsService implements UserDetailsService {
         );
     }
 }
+

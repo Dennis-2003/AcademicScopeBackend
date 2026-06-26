@@ -9,6 +9,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class HorarioService {
 
     private final HorarioRepository horarioRepository;
@@ -54,3 +55,4 @@ public class HorarioService {
         return horarioRepository.save(existente);
     }
 }
+

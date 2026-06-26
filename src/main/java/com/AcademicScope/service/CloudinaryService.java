@@ -11,6 +11,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class CloudinaryService {
 
     private final Cloudinary cloudinary;

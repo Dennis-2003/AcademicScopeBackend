@@ -17,6 +17,7 @@ import com.AcademicScope.repository.notificacion.NotificacionRepository;
 
 @Service
 @RequiredArgsConstructor
+@SuppressWarnings("all")
 public class AsistenciaService {
 
     private final AsistenciaRepository asistenciaRepository;
@@ -126,3 +127,4 @@ public class AsistenciaService {
         }
     }
 }
+
