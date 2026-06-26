@@ -45,6 +45,7 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.obtenerPorId(id));
     }
 
+<<<<<<< HEAD
     @GetMapping("/by-email")
     public ResponseEntity<Usuario> obtenerPorEmail(@RequestParam String email) {
         return ResponseEntity.ok(usuarioService.obtenerPorEmail(email));

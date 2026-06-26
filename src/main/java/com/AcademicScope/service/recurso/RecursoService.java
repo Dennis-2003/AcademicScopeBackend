@@ -1,14 +1,15 @@
 package com.AcademicScope.service.recurso;
 
 import com.AcademicScope.repository.recurso.RecursoRepository;
-import com.AcademicScope.model.Curso;
-import com.AcademicScope.model.Recurso;
 import com.AcademicScope.repository.academico.CursoRepository;
-import jakarta.persistence.EntityNotFoundException;
+import com.AcademicScope.model.Recurso;
+import com.AcademicScope.model.Curso;
+import com.AcademicScope.service.CloudinaryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,31 +26,40 @@ public class RecursoService {
         return recursoRepository.save(recurso);
     }
 
-    public Recurso subirArchivo(MultipartFile file, Long cursoId, String titulo, String tipo) {
-        String url = cloudinaryService.subirArchivo(file);
+    public Recurso subirRecurso(MultipartFile file, Long cursoId, String titulo, String tipo) {
+        try {
+            Curso curso = cursoRepository.findById(cursoId)
+                    .orElseThrow(() -> new RuntimeException("Curso no encontrado"));
 
-        Curso curso = cursoRepository.findById(cursoId)
-                .orElseThrow(() -> new EntityNotFoundException("Curso no encontrado"));
+            String folderName = "AcademicScope/recursos";
+            String cloudinaryUrl = cloudinaryService.uploadFile(file, folderName, tipo);
 
-        Recurso recurso = new Recurso();
-        recurso.setCurso(curso);
-        recurso.setTitulo(titulo);
-        recurso.setTipo(tipo);
-        recurso.setUrl(url);
-        recurso.setTamano(formatearTamano(file.getSize()));
-        recurso.setFechaSubida(LocalDateTime.now());
+            String tamano = file.getSize() >= 1048576
+                    ? String.format("%.1f MB", file.getSize() / 1048576.0)
+                    : String.format("%.0f KB", file.getSize() / 1024.0);
 
-        return recursoRepository.save(recurso);
-    }
+            Recurso recurso = Recurso.builder()
+                    .curso(curso)
+                    .titulo(titulo)
+                    .tipo(tipo)
+                    .url(cloudinaryUrl)
+                    .tamano(tamano)
+                    .fechaSubida(LocalDateTime.now())
+                    .build();
 
-    private String formatearTamano(long bytes) {
-        if (bytes < 1024) return bytes + " B";
-        if (bytes < 1024 * 1024) return String.format("%.1f KB", bytes / 1024.0);
-        return String.format("%.1f MB", bytes / (1024.0 * 1024.0));
+            return recursoRepository.save(recurso);
+        } catch (IOException e) {
+            throw new RuntimeException("Error al subir el archivo a Cloudinary", e);
+        }
     }
 
     public List<Recurso> listarPorCurso(Long cursoId) {
         return recursoRepository.findByCursoId(cursoId);
+    }
+
+    public Recurso obtenerPorId(Long id) {
+        return recursoRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Recurso no encontrado"));
     }
 
     public void eliminar(Long id) {
@@ -58,7 +68,8 @@ public class RecursoService {
         recursoRepository.deleteById(id);
     }
 
-    public Recurso obtenerPorId(Long id) {
-        return recursoRepository.findById(id).orElseThrow(() -> new RuntimeException("Recurso no encontrado"));
+    public String obtenerNombreArchivo(Long id) {
+        Recurso recurso = obtenerPorId(id);
+        return recurso.getTitulo();
     }
 }

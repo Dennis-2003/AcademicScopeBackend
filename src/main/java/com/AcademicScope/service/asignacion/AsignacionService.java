@@ -23,6 +23,15 @@ public class AsignacionService {
         return asignacionRepository.save(asignacion);
     }
 
+    public Asignacion actualizar(Long id, Asignacion asignacion) {
+        Asignacion existente = obtenerPorId(id);
+        existente.setTitulo(asignacion.getTitulo());
+        existente.setDescripcion(asignacion.getDescripcion());
+        existente.setFechaVencimiento(asignacion.getFechaVencimiento());
+        existente.setCurso(asignacion.getCurso());
+        return asignacionRepository.save(existente);
+    }
+
     public List<Asignacion> listarPorCurso(Long cursoId) {
         return asignacionRepository.findByCursoId(cursoId);
     }

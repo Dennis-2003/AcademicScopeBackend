@@ -22,6 +22,11 @@ public class AsignacionController {
         return new ResponseEntity<>(asignacionService.crear(asignacion), HttpStatus.CREATED);
     }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<Asignacion> actualizar(@PathVariable Long id, @RequestBody Asignacion asignacion) {
+        return ResponseEntity.ok(asignacionService.actualizar(id, asignacion));
+    }
+
     @GetMapping("/curso/{cursoId}")
     public ResponseEntity<List<Asignacion>> listarPorCurso(@PathVariable Long cursoId) {
         return ResponseEntity.ok(asignacionService.listarPorCurso(cursoId));

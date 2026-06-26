@@ -23,12 +23,12 @@ public class RecursoController {
     }
 
     @PostMapping("/upload")
-    public ResponseEntity<Recurso> subirArchivo(
+    public ResponseEntity<Recurso> subir(
             @RequestParam("file") MultipartFile file,
             @RequestParam("curso") Long cursoId,
             @RequestParam("titulo") String titulo,
             @RequestParam("tipo") String tipo) {
-        return new ResponseEntity<>(recursoService.subirArchivo(file, cursoId, titulo, tipo), HttpStatus.CREATED);
+        return new ResponseEntity<>(recursoService.subirRecurso(file, cursoId, titulo, tipo), HttpStatus.CREATED);
     }
 
     @GetMapping("/curso/{cursoId}")

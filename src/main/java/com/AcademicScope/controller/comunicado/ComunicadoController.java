@@ -24,6 +24,9 @@ public class ComunicadoController {
     private final ComunicadoService comunicadoService;
     private final ObjectMapper objectMapper;
 
+    @org.springframework.beans.factory.annotation.Value("${file.upload-dir:uploads/}")
+    private String uploadDir;
+
     @GetMapping
     public ResponseEntity<List<Comunicado>> listarComunicados() {
         return ResponseEntity.ok(comunicadoService.listarComunicados());
@@ -41,7 +44,7 @@ public class ComunicadoController {
     @GetMapping("/download/{filename}")
     public ResponseEntity<Resource> descargarArchivo(@PathVariable String filename) {
         try {
-            Path file = Paths.get("uploads/").resolve(filename);
+            Path file = Paths.get(uploadDir).resolve(filename);
             Resource resource = new UrlResource(file.toUri());
 
             if (resource.exists() || resource.isReadable()) {
