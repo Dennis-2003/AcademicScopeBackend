@@ -19,8 +19,11 @@ import org.springframework.stereotype.Component;
 import java.util.Arrays;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+
 @Component
 @RequiredArgsConstructor
+@Slf4j
 public class DataInitializer implements CommandLineRunner {
 
     private final UsuarioRepository usuarioRepository;
@@ -35,7 +38,7 @@ public class DataInitializer implements CommandLineRunner {
         crearInstitucionBase();
         crearUsuarios();
         crearGradosYCursos();
-        System.out.println(" Inicialización completada");
+        log.info(" Inicialización completada");
     }
 
     private void crearInstitucionBase() {
@@ -134,12 +137,12 @@ public class DataInitializer implements CommandLineRunner {
                     .activo(true)
                     .primerIngreso(true)
                     .build());
-            System.out.println("=========================================");
-            System.out.println(" NUEVO USUARIO CREADO: " + nombre + " " + apellido);
-            System.out.println(" Rol: " + rol);
-            System.out.println(" Email: " + email);
-            System.out.println(" Password (desde .env o default): " + rawPassword);
-            System.out.println("=========================================");
+            log.info("=========================================");
+            log.info(" NUEVO USUARIO CREADO: {} {}", nombre, apellido);
+            log.info(" Rol: {}", rol);
+            log.info(" Email: {}", email);
+            log.info(" Password (desde .env o default): {}", rawPassword);
+            log.info("=========================================");
         }
     }
 
