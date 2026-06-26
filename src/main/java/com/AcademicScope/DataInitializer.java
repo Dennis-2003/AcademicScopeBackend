@@ -64,6 +64,7 @@ public class DataInitializer implements CommandLineRunner {
         crearUsuarioSiNoExiste(env.getProperty("TUTOR1_EMAIL", "tutor.juan@academicscope.com"), env.getProperty("TUTOR1_DNI", "33333333"), env.getProperty("TUTOR1_NOMBRE", "Juan"), env.getProperty("TUTOR1_APELLIDO", "Quispe"), env.getProperty("TUTOR1_PASSWORD", "Tutor@2026!"), RolUsuario.TUTOR, null);
         crearUsuarioSiNoExiste(env.getProperty("TUTOR2_EMAIL", "tutora.ana@academicscope.com"), env.getProperty("TUTOR2_DNI", "44444444"), env.getProperty("TUTOR2_NOMBRE", "Ana"), env.getProperty("TUTOR2_APELLIDO", "Mamani"), env.getProperty("TUTOR2_PASSWORD", "Tutor@2026!"), RolUsuario.TUTOR, null);
         crearUsuarioSiNoExiste(env.getProperty("TUTOR3_EMAIL", "tutor.luis@academicscope.com"), env.getProperty("TUTOR3_DNI", "55555555"), env.getProperty("TUTOR3_NOMBRE", "Luis"), env.getProperty("TUTOR3_APELLIDO", "Sanchez"), env.getProperty("TUTOR3_PASSWORD", "Tutor@2026!"), RolUsuario.TUTOR, null);
+        crearUsuarioSiNoExiste(env.getProperty("TUTOR4_EMAIL", "tutor.Smith@academicscope.com"), env.getProperty("TUTOR4_DNI", "71967699"), env.getProperty("TUTOR4_NOMBRE", "Smith"), env.getProperty("TUTOR4_APELLIDO", "Quiroz"), env.getProperty("TUTOR4_PASSWORD", "Tutor@2026!"), RolUsuario.TUTOR, null);
 
         // Obtener a los tutores recién creados para asignarlos a los estudiantes
         Usuario tutor1 = usuarioRepository.findByDni(env.getProperty("TUTOR1_DNI", "33333333")).orElse(null);
