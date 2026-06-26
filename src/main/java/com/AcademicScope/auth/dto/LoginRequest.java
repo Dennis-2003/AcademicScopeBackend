@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
+@SuppressWarnings("all")
 public class LoginRequest {
     @NotBlank(message = "El email/DNI no puede estar vacío")
     private String username;

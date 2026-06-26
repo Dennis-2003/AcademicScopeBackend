@@ -13,6 +13,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/entregas")
 @RequiredArgsConstructor
+@SuppressWarnings("null")
 public class EntregaAsignacionController {
 
     private final EntregaAsignacionRepository entregaRepository;
