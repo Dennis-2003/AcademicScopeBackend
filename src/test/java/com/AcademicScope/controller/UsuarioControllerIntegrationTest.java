@@ -37,7 +37,7 @@ class UsuarioControllerIntegrationTest {
     @BeforeAll
     void setUp() throws Exception {
         adminToken = loginAndGetToken("dennis@academicscope.com", "Dennis@2026!");
-        estudianteToken = loginAndGetToken("pedro@academicscope.com", "Estu@2026!");
+        estudianteToken = loginAndGetToken("estudiante.pedro@academicscope.com", "Estu@2026!");
     }
 
     private String loginAndGetToken(String username, String password) throws Exception {
@@ -122,6 +122,17 @@ class UsuarioControllerIntegrationTest {
                 .header("Authorization", "Bearer " + estudianteToken)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(cambio)))
+                .andExpect(status().isOk());
+
+        // Revertir el cambio para no afectar a otras clases de prueba que usan el mismo contexto de Spring
+        CambioPasswordDTO revertir = CambioPasswordDTO.builder()
+                .dni("11111111").passwordActual("Nueva@2026!")
+                .passwordNuevo("Estu@2026!").build();
+
+        mockMvc.perform(put("/api/usuarios/cambiar-password")
+                .header("Authorization", "Bearer " + estudianteToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(revertir)))
                 .andExpect(status().isOk());
     }
 

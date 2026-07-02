@@ -32,8 +32,8 @@ class CalificacionControllerIntegrationTest {
 
     @BeforeEach
     void setUp() throws Exception {
-        docenteToken = obtenerToken("mario@academicscope.com", "Profe@2026!");
-        estudianteToken = obtenerToken("pedro@academicscope.com", "Estu@2026!");
+        docenteToken = obtenerToken("profesor.mario@academicscope.com", "Profe@2026!");
+        estudianteToken = obtenerToken("estudiante.pedro@academicscope.com", "Estu@2026!");
     }
 
     private String obtenerToken(String username, String password) throws Exception {
