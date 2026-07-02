@@ -37,7 +37,7 @@ class UsuarioControllerIntegrationTest {
     @BeforeAll
     void setUp() throws Exception {
         adminToken = loginAndGetToken("dennis@academicscope.com", "Dennis@2026!");
-        estudianteToken = loginAndGetToken("estudiante.pedro@academicscope.com", "Estu@2026!");
+        estudianteToken = loginAndGetToken("pedro@academicscope.com", "Estu@2026!");
     }
 
     private String loginAndGetToken(String username, String password) throws Exception {

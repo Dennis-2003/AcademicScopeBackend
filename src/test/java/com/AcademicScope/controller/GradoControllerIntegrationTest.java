@@ -32,7 +32,7 @@ class GradoControllerIntegrationTest {
     @BeforeEach
     void setUp() throws Exception {
         adminToken = obtenerToken("dennis@academicscope.com", "Dennis@2026!");
-        estudianteToken = obtenerToken("estudiante.pedro@academicscope.com", "Estu@2026!");
+        estudianteToken = obtenerToken("pedro@academicscope.com", "Estu@2026!");
     }
 
     private String obtenerToken(String username, String password) throws Exception {

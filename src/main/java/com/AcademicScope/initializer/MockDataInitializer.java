@@ -74,7 +74,7 @@ public class MockDataInitializer implements CommandLineRunner {
 
     private void crearDocentesYTutoresIniciales() {
         // Docentes
-        crearUsuarioSiNoExiste(env.getProperty("DOCENTE1_EMAIL", "profesor.mario@academicscope.com"), env.getProperty("DOCENTE1_DNI", "12345678"), "Mario", "Gutierrez", env.getProperty("DOCENTE1_PASSWORD", "Profe@2026!"), RolUsuario.DOCENTE, null);
+        crearUsuarioSiNoExiste(env.getProperty("DOCENTE1_EMAIL", "mario@academicscope.com"), env.getProperty("DOCENTE1_DNI", "12345678"), "Mario", "Gutierrez", env.getProperty("DOCENTE1_PASSWORD", "Profe@2026!"), RolUsuario.DOCENTE, null);
         crearUsuarioSiNoExiste(env.getProperty("DOCENTE2_EMAIL", "profesora.laura@academicscope.com"), env.getProperty("DOCENTE2_DNI", "87654321"), "Laura", "Condori", env.getProperty("DOCENTE2_PASSWORD", "Profe@2026!"), RolUsuario.DOCENTE, null);
         crearUsuarioSiNoExiste(env.getProperty("DOCENTE3_EMAIL", "profesor.carlos@academicscope.com"), env.getProperty("DOCENTE3_DNI", "11223344"), "Carlos", "Perez", env.getProperty("DOCENTE3_PASSWORD", "Profe@2026!"), RolUsuario.DOCENTE, null);
 
@@ -87,7 +87,7 @@ public class MockDataInitializer implements CommandLineRunner {
         Usuario tutor2 = usuarioRepository.findByDni(env.getProperty("TUTOR2_DNI", "44444444")).orElse(null);
 
         // Estudiantes iniciales
-        crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE1_EMAIL", "estudiante.pedro@academicscope.com"), env.getProperty("ESTUDIANTE1_DNI", "11111111"), "Pedro", "Quispe", env.getProperty("ESTUDIANTE1_PASSWORD", "Estu@2026!"), RolUsuario.ESTUDIANTE, tutor1);
+        crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE1_EMAIL", "pedro@academicscope.com"), env.getProperty("ESTUDIANTE1_DNI", "11111111"), "Pedro", "Quispe", env.getProperty("ESTUDIANTE1_PASSWORD", "Estu@2026!"), RolUsuario.ESTUDIANTE, tutor1);
         crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE2_EMAIL", "estudiante.lucia@academicscope.com"), env.getProperty("ESTUDIANTE2_DNI", "22222222"), "Lucia", "Quispe", env.getProperty("ESTUDIANTE2_PASSWORD", "Estu@2026!"), RolUsuario.ESTUDIANTE, tutor1);
         crearUsuarioSiNoExiste(env.getProperty("ESTUDIANTE3_EMAIL", "estudiante.marcos@academicscope.com"), env.getProperty("ESTUDIANTE3_DNI", "66666666"), "Marcos", "Mamani", env.getProperty("ESTUDIANTE3_PASSWORD", "Estu@2026!"), RolUsuario.ESTUDIANTE, tutor2);
     }
